@@ -34,6 +34,7 @@ void yyerror(const char* s);
 %token                          ASSIGN
 %token                          PIPE
 %token                          AND
+%token                          NL
 
 /* Non-Terminals */
 
@@ -65,8 +66,10 @@ bnf
 
 
 binding_list
-    : binding_list binding                      { $$ = appendBinding($1, $2); }
+    : binding_list NL binding                   { $$ = appendBinding($1, $2); }
+    | binding NL                                { $$ = createBindingListFromBinding($1); }
     | binding                                   { $$ = createBindingListFromBinding($1); }
+    | NL                                        {  }
     ;
 
 binding

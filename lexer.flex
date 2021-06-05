@@ -15,12 +15,13 @@ OR                      [\n\t\r ]*\|[\n\t\r ]*
 
 %%
 
-{NonTerminal}           { return NON_TERMINAL_VAL; }
-{Terminal}              { return TERMINAL_VAL; }
+{NonTerminal}           { yylval.non_terminal_value = strdup(yytext); return NON_TERMINAL_VAL; }
+{Terminal}              { yylval.terminal_value = strdup( iteraterateOverTerminal() ); return TERMINAL_VAL; }
 ::=                     { return ASSIGN; }
 {OR}                    { return PIPE; }
 [\t ]+                  { return AND; }
-[\r\n]                    /*Do nothing*/
+[\n]+                   { return NL; }
+[\r]                    /*Do nothing*/
 .                       { printf("Error"); }
 
 %%
