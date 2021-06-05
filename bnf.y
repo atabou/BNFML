@@ -11,6 +11,8 @@ FILE* outFile;
 int yylex();
 void yyerror(const char* s);
 
+unsigned int idGenerator;
+
 %}
 
 %union {
@@ -54,9 +56,10 @@ void yyerror(const char* s);
 
 /* Precedence and Associativity */
 
+%left                           NL
 %left                           ASSIGN
 %left                           PIPE
-%left                           
+%left                           AND                       
 
 %%
 
@@ -66,10 +69,8 @@ bnf
 
 
 binding_list
-    : binding_list NL binding                   { $$ = appendBinding($1, $2); }
-    | binding NL                                { $$ = createBindingListFromBinding($1); }
+    : binding_list NL binding                   { $$ = appendBinding($1, $3); }
     | binding                                   { $$ = createBindingListFromBinding($1); }
-    | NL                                        {  }
     ;
 
 binding
@@ -82,13 +83,13 @@ or_expression
     ;
 
 and_expression
-    : and_expression AND symbol                 { $$ = appendSymbol($1, $2); }
-    | symbol                                    { $$ = createAndExpression($1); }
+    : and_expression AND symbol                 { $$ = appendSymbol($1, $3); }
+    | symbol                                    { $$ = createAndExpr($1); }
     ; 
 
 symbol
     : non_terminal                              { $$ = createNonTerminalSymbol($1); }
-    | terminal                                  { $$ = createTerminalSymbol($2); }
+    | terminal                                  { $$ = createTerminalSymbol($1); }
     ;
 
 non_terminal
@@ -104,17 +105,18 @@ terminal
 
 #include <stdlib.h>
 int main(int argc, char **argv){
-    const char* inFileName = (argc > 1)?argv[1]:"test.sml";
-    const char* outFileName = (argc > 2)?argv[2]:"test.dot";
-    yyin = fopen(inFileName, "r");
-    outFile = fopen(outFileName, "w");
-    fprintf(outFile, "digraph tree {\n");
-    do {
-        yyparse();
-    } while(!feof(yyin));
-    fprintf(outFile, "}\n");
-    fclose(yyin);
-    fclose(outFile);
+    idGenerator = 0;
+    // const char* inFileName = (argc > 1)?argv[1]:"test.sml";
+    // const char* outFileName = (argc > 2)?argv[2]:"test.dot";
+    // yyin = fopen(inFileName, "r");
+    // outFile = fopen(outFileName, "w");
+    // fprintf(outFile, "digraph tree {\n");
+    // do {
+    //     yyparse();
+    // } while(!feof(yyin));
+    // fprintf(outFile, "}\n");
+    // fclose(yyin);
+    // fclose(outFile);
     return 0;
 }
 
