@@ -1,14 +1,33 @@
 
-/* List of classes needed for BNF */
+#ifndef BNF
+    
+    #define BNF
+    
+    typedef struct Terminal Terminal;
+    Terminal* createTerminal( char* Regex );
 
-#include "BindingList.h"
-#include "Binding.h"
-#include "OrExpr.h"
-#include "AndExpr.h"
-#include "Symbol.h"
-#include "NonTerminal.h"
-#include "Terminal.h"
+    typedef struct NonTerminal NonTerminal;
+    NonTerminal* createNonTerminal( char* Name );
 
-/* Global Variables */
+    typedef struct Symbol Symbol;
+    Symbol* createNonTerminalSymbol( NonTerminal* nterm );
+    Symbol* createTerminalSymbol( Terminal* term );
 
-extern unsigned int idGenerator = 0;
+    typedef struct AndExpr AndExpr;
+    AndExpr* createAndExpr( Symbol* symbol );
+    AndExpr* appendExpression( AndExpr* lst, Symbol* symbol );
+
+    typedef struct OrExpr OrExpr;
+    OrExpr* createOrExpr( AndExpr* AndExpression );
+    OrExpr* appendAndExpr( OrExpr* lst, AndExpr* AndExpression );
+
+    typedef struct Binding Binding;
+    Binding* createBinding( NonTerminal* nterm, OrExpr* OrExpression );
+
+    typedef struct BindingList BindingList;
+    BindingList* createBindingListFromBinding( Binding* b );
+    BindingList* appendBinding( BindingList* lst, Binding* b );
+
+    extern unsigned int idGenerator = 0;
+
+#endif
