@@ -15,7 +15,7 @@
 
     typedef struct AndExpr AndExpr;
     AndExpr* createAndExpr( Symbol* symbol );
-    AndExpr* appendExpression( AndExpr* lst, Symbol* symbol );
+    AndExpr* appendSymbol( AndExpr* lst, Symbol* symbol );
 
     typedef struct OrExpr OrExpr;
     OrExpr* createOrExpr( AndExpr* AndExpression );
@@ -28,6 +28,8 @@
     BindingList* createBindingListFromBinding( Binding* b );
     BindingList* appendBinding( BindingList* lst, Binding* b );
 
-    extern unsigned int idGenerator = 0;
+    extern unsigned int idGenerator;
+    
+
 
 #endif
