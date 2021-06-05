@@ -1,6 +1,6 @@
 
 .vscode/
-./spec/*.pdf
+spec/*.pdf
 
 *.tab.*
 bnf.output
@@ -9,4 +9,4 @@ lex.yy.c
 
 *.o
 
-./bin/bnfml
+bin/bnfml
