@@ -1,3 +1,10 @@
 
 .vscode/
 ./spec/*.pdf
+
+*.tab.*
+bnf.output
+
+lex.yy.c
+
+*.o
