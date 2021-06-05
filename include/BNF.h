@@ -1,4 +1,5 @@
 
+
 #ifndef BNF
     
     #define BNF
@@ -29,7 +30,5 @@
     BindingList* appendBinding( BindingList* lst, Binding* b );
 
     extern unsigned int idGenerator;
-    
-
 
 #endif
