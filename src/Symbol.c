@@ -44,3 +44,19 @@ Symbol* createTerminalSymbol( Terminal* term ) {
     return e;
 
 }
+
+void freeSymbol(Symbol* symbol) {
+
+    if( symbol->type == TERM ) {
+
+        freeTerminal( symbol->term );
+        symbol->term = NULL;
+
+    } else {
+
+        freeNonTerminal( symbol->nterm );
+        symbol->nterm = NULL;
+
+    }
+
+}

@@ -20,3 +20,10 @@ NonTerminal* createNonTerminal( char* Name ) {
     return nt;
 
 }
+
+void freeNonTerminal( NonTerminal* nterm ) {
+
+    free(nterm->Name);
+    nterm->Name = NULL;
+    
+}

@@ -34,3 +34,16 @@ OrExpr* appendAndExpr( OrExpr* lst, AndExpr* AndExpression ) {
     return o;
 
 }
+
+void freeOrExpr(OrExpr* OrExpression) {
+
+    freeAndExpr( OrExpression->AndExpression );
+    OrExpression->AndExpression = NULL;
+
+    if( OrExpression->prevOrExpr != NULL ) {
+        freeOrExpr(OrExpression->prevOrExpr);
+    }
+
+    OrExpression->prevOrExpr = NULL;
+
+}

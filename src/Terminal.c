@@ -20,3 +20,10 @@ Terminal* createTerminal( char* Regex ) {
     return t;
 
 }
+
+void freeTerminal( Terminal* term ) {
+
+    free( term->regex );
+    term->regex = NULL;
+
+}

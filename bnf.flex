@@ -69,8 +69,6 @@ char* concatenateStrings( char* s, char* cat ) {
 
 }
 
-// TODO: Vrify Memory Leak of s.
-
 char* iterateOverTerminal() {
 
     char* s = NULL;

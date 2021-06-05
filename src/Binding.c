@@ -23,3 +23,14 @@ Binding* createBinding( NonTerminal* nterm, OrExpr* OrExpression ) {
     return b; 
 
 }
+
+void freeBinding(Binding* binding) {
+
+    freeNonTerminal(binding->nterm);
+    binding->nterm = NULL;
+
+    freeOrExpr(binding->OrExpression);
+    binding->OrExpression = NULL;
+
+
+}

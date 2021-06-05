@@ -64,7 +64,7 @@ unsigned int idGenerator;
 %%
 
 bnf
-    : binding_list
+    : binding_list                              {printf( "Done." ); freeBindingList($1);}
     ;
 
 

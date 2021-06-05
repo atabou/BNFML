@@ -31,3 +31,16 @@ BindingList* appendBinding( BindingList* lst, Binding* b ) {
     r->binding = b;
     
 }
+
+void freeBindingList(BindingList* bindingList) {
+
+    freeBinding( bindingList->binding );
+    bindingList->binding = NULL;
+
+    if( bindingList->prevBindings != NULL ) {
+        freeBindingList( bindingList->prevBindings );
+    }
+
+    bindingList->prevBindings = NULL;
+
+}

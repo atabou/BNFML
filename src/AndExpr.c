@@ -36,3 +36,16 @@ AndExpr* appendSymbol( AndExpr* lst, Symbol* symbol ) {
     return a;
 
 }
+
+void freeAndExpr(AndExpr* AndExpression) {
+
+    freeSymbol( AndExpression->symbol );
+    AndExpression->symbol = NULL;
+
+    if( AndExpression->prevAndExpr != NULL ) {
+        freeAndExpr( AndExpression->prevAndExpr );
+    }
+
+    AndExpression->prevAndExpr = NULL;
+
+}
