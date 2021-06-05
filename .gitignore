@@ -8,3 +8,5 @@ bnf.output
 lex.yy.c
 
 *.o
+
+./bin/bnfml
