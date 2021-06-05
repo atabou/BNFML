@@ -1,0 +1,140 @@
+
+\documentclass{scrreprt}
+\usepackage{listings}
+\usepackage{underscore}
+\usepackage[bookmarks=true]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[fleqn]{amsmath}
+\usepackage{syntax}
+
+\hypersetup{
+    pdftitle={Software Requirement Specification},    % title
+    pdfauthor={Jean-Philippe Eisenbarth},                     % author
+    pdfsubject={TeX and LaTeX},                        % subject of the document
+    pdfkeywords={TeX, LaTeX, graphics, images}, % list of keywords
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=blue,       % color of internal links
+    citecolor=black,       % color of links to bibliography
+    filecolor=black,        % color of file links
+    urlcolor=purple,        % color of external links
+    linktoc=page            % only page is linked
+}%
+
+\def\myversion{1.0 }
+\date{}
+%\title{%
+
+%}
+\usepackage{hyperref}
+\begin{document}
+
+\begin{flushright}
+    \rule{16cm}{5pt}\vskip1cm
+    \begin{bfseries}
+        \Huge{LANGUAGE SPECIFICATION}\\
+        \vspace{1.9cm}
+        for\\
+        \vspace{1.9cm}
+        BNF Meta Language (BNF-ML)\\
+        \vspace{1.9cm}
+        \LARGE{Version \myversion approved}\\
+        \vspace{1.9cm}
+        Prepared by Andre Tabourian\\
+        \vspace{1.9cm}
+        \today\\
+    \end{bfseries}
+\end{flushright}
+
+\tableofcontents
+
+
+\chapter*{Revision History}
+
+\begin{center}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+	    Name & Date & Reason For Changes & Version\\
+        \hline
+	    21 & 22 & 23 & 24\\
+        \hline
+	    31 & 32 & 33 & 34\\
+        \hline
+    \end{tabular}
+\end{center}
+
+\chapter{ABOUT}
+
+BNFML is a programming language based on the Backus Naur Form (BNF) used to lex and parse the BNF language itself.
+
+\chapter{Language Specification}
+
+\section{Grammar}
+
+    The following, is the BNF specification of BNFML.
+
+    \begin{grammar}
+
+        <BNF> ::= <List of Bindings> | <empty>
+
+        <List of Bindings> ::= <List of Bindings> <Binding> | <Binding>
+
+        <Binding> ::= <NonTerminal> `::=' <OrExpression>
+
+        <OrExpression> ::= <OrExpression> `|' <AndExpression> | <AndExpression>
+
+        <AndExpression> ::= <AndExpression> <Expression> | <Expression>
+
+        <Expression> ::= <NonTerminal> | <Terminal>
+    
+        <NonTerminal> ::= `<.+>'
+        
+        <Terminal> ::= `.+'
+
+        <empty> ::= `'
+
+    \end{grammar}
+    
+    Please note that BNFML is self-descriptive, as such the only specification needed to describe BNFML is BNFML itself. What this means is that the specification you see above is BNFML,
+    and it describes itself.
+
+\section{Explanation of the Spec}
+
+The following is an explanation of the above specification:
+
+\begin{itemize}
+    \item A \emph{BNF} consists of a list of \emph{Bindings} or nothing (`').
+    \item A \emph{Binding} consists of a \emph{NonTerminal} followed by \emph{::=} and an \emph{OrExpression}
+    \item An \emph{OrExpression} consists of an \emph{AndExpression} or another \emph{OrExpression} followed by a pipe \emph{$|$} and an \emph{AndExpression}
+    \item An \emph{AndExpression} consists of an \emph{Expression} or another \emph{AndExpression} followed by an \emph{Expression}
+    \item An \emph{Expression} is nothing more than a \emph{NonTerminal} or a \emph{Terminal}
+    \item A \emph{NonTerminal} is denoted by angle brackets $< >$ containing any character.
+    \item A \emph{Terminal} is denoted by single quotes containing any regular expressions. Note that that to insert single quotes in a terminal, they must be escaped with \textbackslash
+\end{itemize}
+
+\section{Whitespace}
+
+This section deals with whitespace characters:\\
+
+\underline{New Lines:}\\
+
+- Two Bindings are separated by at least one new line.
+
+- New lines only separate bindings and nothing else.\\
+
+\underline{Spaces and Tabs:}\\
+
+- Whitespace does not matter except within a Terminal.
+
+- `1' `2' and `1'`2' are interpreted in the same way.
+
+- $<a>\ \ ::= \ <b>$ and $<a>::<b>$ are interpreted in the same way.
+
+
+\chapter{Implementation}
+
+\section{Lexer Implementation}
+
+\section{Parser Implementation}
+
+\end{document}

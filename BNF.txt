@@ -1,0 +1,9 @@
+
+<bnf> ::= <list of bindings> | *nothing*
+<list of bindings> ::= <list of bindings> <binding> | <binding>
+<binding> ::= <NonTerminal> "::=" <Expression>
+<OrExpression> ::= <OrExpression> "|" <AndExpression> | <AndExpression>
+<AndExpression> ::= <AndExpression> <Expression> | <Expression>
+<Expression> ::= <NonTerminal> | <Terminal>                        
+<NonTerminal> ::= "<.+>"
+<Terminal> ::= ".+"
