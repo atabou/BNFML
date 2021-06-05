@@ -3,6 +3,13 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
+
+#include "./include/BNF.h"
+#include "bnf.tab.h"
+
+char* iterateOverTerminal();
+char* concatenateStrings( char* s, char* cat );
 
 %}
 
@@ -16,7 +23,7 @@ OR                      [\n\t\r ]*\|[\n\t\r ]*
 %%
 
 {NonTerminal}           { yylval.non_terminal_value = strdup(yytext); return NON_TERMINAL_VAL; }
-{Terminal}              { yylval.terminal_value = strdup( iteraterateOverTerminal() ); return TERMINAL_VAL; }
+{Terminal}              { yylval.terminal_value = strdup( iterateOverTerminal() ); return TERMINAL_VAL; }
 ::=                     { return ASSIGN; }
 {OR}                    { return PIPE; }
 [\t ]+                  { return AND; }
@@ -26,16 +33,54 @@ OR                      [\n\t\r ]*\|[\n\t\r ]*
 
 %%
 
+char* concatenateStrings( char* s, char* cat ) {
+
+    if( s == NULL ) {
+    
+        s = (char*) malloc( sizeof(char)* (strlen(cat) + 1) );
+        
+        if( s == NULL ) {
+            printf("Ran out of heap space");
+            exit(-1);
+        }
+        
+        s = strcpy( s, cat );
+
+    } else {
+
+        char cpy[ strlen(s) + 1 ];
+        strcpy( cpy, s );
+
+        free(s);
+
+        s = (char*) malloc( sizeof( char ) * (strlen(cpy) + strlen(cat) + 1) );
+        
+        if( s == NULL ) {
+            printf("Ran out of heap space");
+            exit(-1);
+        }
+
+        strcpy(s, cpy);
+        strcat(s, cat);
+
+    }
+
+    return s;
+
+}
+
+// TODO: Vrify Memory Leak of s.
+
 char* iterateOverTerminal() {
 
-    string s = "";
-
+    char* s = NULL;
     char current = input();
+
     while( true ) {
 
         if( current == '\n' ) {
             
-            log.Error("Missing quote: '");
+            printf("Missing quote: '");
             exit(-1);
 
         } else if ( current == '\'' ) {
@@ -47,15 +92,31 @@ char* iterateOverTerminal() {
             char checkNext = input();
 
             if(checkNext == '\'') {
-                s += checkNext;
+
+                char* cat = "'";
+                s = concatenateStrings( s, cat );
+
             } else {
-                s = s + current + checkNext;
+
+                char cat[3];
+
+                cat[0] = current;
+                cat[1] = checkNext;
+                cat[2] = '\0';
+
+                s = concatenateStrings( s, cat );
+
             }
 
 
         } else {
 
-            s += current;
+            char cat[2];
+
+            cat[0] = current;
+            cat[1] = '\0';
+
+            s = concatenateStrings( s, cat );
 
         }
 
