@@ -6,8 +6,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "./include/BNF.h"
-#include "bnf.tab.h"
+#include "BNF.h"
+#include "bnfml.tab.h"
 
 char* iterateOverTerminal();
 char* iterateOverNonTerminal();

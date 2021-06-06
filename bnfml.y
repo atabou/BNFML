@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "./include/BNF.h"
+#include "BNF.h"
 
 #define YYDEBUG 1
 
