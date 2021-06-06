@@ -3,6 +3,8 @@
 #ifndef BNF
     
     #define BNF
+
+    #include <stdlib.h>
     
     typedef struct Terminal Terminal;
     Terminal* createTerminal( char* Regex );
