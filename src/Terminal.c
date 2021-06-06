@@ -1,14 +1,8 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "BNF.h"
-
-struct Terminal {
-
-    unsigned int id;
-    char* regex;
-
-};
 
 Terminal* createTerminal( char* Regex ) {
 
@@ -31,5 +25,11 @@ void freeTerminal( Terminal* term ) {
 void printTerminal( Terminal* term ) {
 
     printf( "'%s'", term->regex );
+
+}
+
+void buildTerminalNode( Terminal* term, FILE* fp ) {
+
+    fprintf( fp, "%u [label=\"%s\"];\n", term->id, term->regex );
 
 }

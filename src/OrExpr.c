@@ -3,13 +3,6 @@
 
 #include "BNF.h"
 
-struct OrExpr {
-
-    unsigned int id;
-    OrExpr* prevOrExpr;
-    AndExpr* AndExpression;
-
-};
 
 OrExpr* createOrExpr( AndExpr* AndExpression ) {
 

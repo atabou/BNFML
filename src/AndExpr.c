@@ -4,13 +4,6 @@
 
 #include "BNF.h"
 
-struct AndExpr {
-
-    unsigned int id;
-    AndExpr* prevAndExpr;
-    Symbol* symbol;
-
-};
 
 AndExpr* createAndExpr( Symbol* symbol ) {
 

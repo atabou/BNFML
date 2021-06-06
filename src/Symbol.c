@@ -3,23 +3,7 @@
 
 #include "BNF.h"
 
-enum SymbolType {
 
-    TERM,
-    NONTERM
-
-};
-
-struct Symbol {
-
-    unsigned int id;
-    enum SymbolType type;
-    union {
-        struct { NonTerminal* nterm; };
-        struct { Terminal* term; };
-    };
-
-};
 
 Symbol* createNonTerminalSymbol( NonTerminal* nterm ) {
 
@@ -72,6 +56,24 @@ void printSymbol( Symbol* symbol ) {
     } else {
 
         printNonTerminal( symbol->nterm );
+
+    }
+
+}
+
+void buildSymbolNode( Symbol* symbol, FILE* fp ) {
+
+    fprintf( fp, "%u [label=\"%s\"];\n", symbol->id, "symbol" );
+
+    if( symbol->type == TERM ) {
+
+        fprintf( fp, "%u -> %u [label=\"Terminal\"];\n", symbol->id, symbol->term->id );
+        buildTerminalNode( symbol->term, fp );
+
+    } else {
+
+        fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", symbol->id, symbol->nterm->id );
+        buildNonTerminalNode( symbol->nterm, fp );
 
     }
 

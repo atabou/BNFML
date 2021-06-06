@@ -3,15 +3,6 @@
 
 #include "BNF.h"
 
-struct Binding {
-
-    unsigned int id;
-    NonTerminal* nterm;
-    OrExpr* OrExpression; 
-
-};
-
-
 Binding* createBinding( NonTerminal* nterm, OrExpr* OrExpression ) {
 
     Binding* b = (Binding*) malloc(sizeof(Binding));

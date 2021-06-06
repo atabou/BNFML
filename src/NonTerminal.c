@@ -3,13 +3,6 @@
 
 #include "BNF.h"
 
-struct NonTerminal {
-
-    unsigned int id;
-    char* Name;
-
-};
-
 NonTerminal* createNonTerminal( char* Name ) {
 
     NonTerminal* nt = (NonTerminal*) malloc(sizeof(NonTerminal));
@@ -31,5 +24,11 @@ void freeNonTerminal( NonTerminal* nterm ) {
 void printNonTerminal( NonTerminal* nterm ) {
 
     printf( "%s", nterm->Name );
+
+}
+
+void buildNonTerminalNode( NonTerminal* nterm, FILE* fp ) {
+
+    fprintf( fp, "%u [label=\"%s\"];\n", nterm->id, nterm->Name );
 
 }

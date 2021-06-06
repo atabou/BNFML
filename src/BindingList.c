@@ -3,14 +3,6 @@
 
 #include "BNF.h"
 
-struct BindingList {
-
-    unsigned int id;
-    BindingList* prevBindings;
-    Binding* binding;
-
-};
-
 BindingList* createBindingListFromBinding( Binding* b ) {
 
     BindingList* r = (BindingList*) malloc( sizeof(BindingList) );
