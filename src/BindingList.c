@@ -45,7 +45,6 @@ void freeBindingList(BindingList* bindingList) {
     free( bindingList->prevBindings );
     bindingList->prevBindings = NULL;
 
-    free(bindingList);
 }
 
 void printBindingList( BindingList* lst ) {
