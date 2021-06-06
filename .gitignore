@@ -1,13 +1,19 @@
 
+# VsCode Folder
 .vscode/
+
+# Specification Folder
 spec/*.pdf
 
-*.tab.*
-bnf.output
-bnf.dot
+# Folders
+log/*
 
+# Bison Files
+*.tab.*
+
+# Flex Files
 lex.yy.c
 
+# General Files to exclude
 *.o
-
 bin/bnfml
