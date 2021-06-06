@@ -4,11 +4,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "./include/BNF.h"
 #include "bnf.tab.h"
 
 char* iterateOverTerminal();
+char* iterateOverNonTerminal();
 char* concatenateStrings( char* s, char* cat );
 
 %}
@@ -16,20 +18,19 @@ char* concatenateStrings( char* s, char* cat );
 %option noyywrap
 %option yylineno
 
-NonTerminal             <.+>
+NonTerminal             \<
 Terminal                '
 OR                      [\n\t\r ]*\|[\n\t\r ]*
 
 %%
 
-{NonTerminal}           { yylval.non_terminal_value = strdup(yytext); return NON_TERMINAL_VAL; }
-{Terminal}              { yylval.terminal_value = strdup( iterateOverTerminal() ); return TERMINAL_VAL; }
+{NonTerminal}           { yylval.non_terminal_value = iterateOverNonTerminal(); return NON_TERMINAL_VAL; }
+{Terminal}              { yylval.terminal_value = iterateOverTerminal(); return TERMINAL_VAL; }
 ::=                     { return ASSIGN; }
 {OR}                    { return PIPE; }
-[\t ]+                  { return AND; }
 [\n]+                   { return NL; }
-[\r]                    /*Do nothing*/
-.                       { printf("Error"); }
+[\r\t ]+                /*Do nothing*/
+.                       { printf( "Error: %s\n", yytext ); exit(-1); }
 
 %%
 
@@ -62,6 +63,68 @@ char* concatenateStrings( char* s, char* cat ) {
 
         strcpy(s, cpy);
         strcat(s, cat);
+
+    }
+
+    return s;
+
+}
+
+char* iterateOverNonTerminal() {
+
+    char* s = concatenateStrings( NULL, "<" );
+    char current = input();
+
+    while( true ) {
+
+        if( current == '\n' ) {
+            
+            printf("Missing closing bracket: >");
+            exit(-1);
+
+        } else if ( current == '>' ) {
+        
+            s = concatenateStrings( s, ">" );
+            break;
+        
+        } else if (current == '\\') {
+
+            char checkNext = input();
+
+            if(checkNext == '>' || checkNext == '<') {
+
+                char cat[2];
+
+                cat[0] = checkNext;
+                cat[1] = '\0';
+
+                s = concatenateStrings( s, cat );
+
+            } else {
+
+                char cat[3];
+
+                cat[0] = current;
+                cat[1] = checkNext;
+                cat[2] = '\0';
+
+                s = concatenateStrings( s, cat );
+
+            }
+
+
+        } else {
+
+            char cat[2];
+
+            cat[0] = current;
+            cat[1] = '\0';
+
+            s = concatenateStrings( s, cat );
+
+        }
+
+        current = input();
 
     }
 
