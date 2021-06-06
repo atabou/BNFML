@@ -50,11 +50,13 @@ void freeSymbol(Symbol* symbol) {
     if( symbol->type == TERM ) {
 
         freeTerminal( symbol->term );
+        free( symbol->term );
         symbol->term = NULL;
 
     } else {
 
         freeNonTerminal( symbol->nterm );
+        free( symbol->nterm );
         symbol->nterm = NULL;
 
     }

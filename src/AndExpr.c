@@ -40,12 +40,14 @@ AndExpr* appendSymbol( AndExpr* lst, Symbol* symbol ) {
 void freeAndExpr(AndExpr* AndExpression) {
 
     freeSymbol( AndExpression->symbol );
+    free( AndExpression->symbol );
     AndExpression->symbol = NULL;
 
     if( AndExpression->prevAndExpr != NULL ) {
         freeAndExpr( AndExpression->prevAndExpr );
     }
 
+    free( AndExpression->prevAndExpr );
     AndExpression->prevAndExpr = NULL;
 
 }

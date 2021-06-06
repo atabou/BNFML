@@ -27,9 +27,11 @@ Binding* createBinding( NonTerminal* nterm, OrExpr* OrExpression ) {
 void freeBinding(Binding* binding) {
 
     freeNonTerminal(binding->nterm);
+    free( binding->nterm );
     binding->nterm = NULL;
 
-    freeOrExpr(binding->OrExpression);
+    freeOrExpr( binding->OrExpression );
+    free( binding->OrExpression );
     binding->OrExpression = NULL;
 
 

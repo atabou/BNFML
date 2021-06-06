@@ -38,12 +38,14 @@ OrExpr* appendAndExpr( OrExpr* lst, AndExpr* AndExpression ) {
 void freeOrExpr(OrExpr* OrExpression) {
 
     freeAndExpr( OrExpression->AndExpression );
+    free( OrExpression->AndExpression );
     OrExpression->AndExpression = NULL;
 
     if( OrExpression->prevOrExpr != NULL ) {
         freeOrExpr(OrExpression->prevOrExpr);
     }
 
+    free(OrExpression->prevOrExpr);
     OrExpression->prevOrExpr = NULL;
 
 }

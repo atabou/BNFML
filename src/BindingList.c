@@ -35,12 +35,16 @@ BindingList* appendBinding( BindingList* lst, Binding* b ) {
 void freeBindingList(BindingList* bindingList) {
 
     freeBinding( bindingList->binding );
+    free( bindingList->binding );
     bindingList->binding = NULL;
 
     if( bindingList->prevBindings != NULL ) {
         freeBindingList( bindingList->prevBindings );
     }
 
+    free( bindingList->prevBindings );
     bindingList->prevBindings = NULL;
+
+    free(bindingList);
 
 }
