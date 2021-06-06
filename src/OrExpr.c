@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../include/BNF.h"
+#include "BNF.h"
 
 struct OrExpr {
 
