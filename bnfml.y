@@ -5,8 +5,6 @@
 
 #include "BNF.h"
 
-#define YYDEBUG 1
-
 extern FILE *yyin;
 FILE* outFile;
 
@@ -106,10 +104,6 @@ terminal
 
 #include <stdlib.h>
 int main(int argc, char **argv){
-
-    #ifdef YYDEBUG
-        yydebug = 1;
-    #endif
 
     // Initialise Global Variables;
     idGenerator = 0;
