@@ -51,3 +51,16 @@ void freeAndExpr(AndExpr* AndExpression) {
     AndExpression->prevAndExpr = NULL;
 
 }
+
+void printAndExpr( AndExpr* AndExpression ) {
+
+    printSymbol(AndExpression->symbol);
+
+    if( AndExpression->prevAndExpr != NULL ) {
+
+        printf(" ");
+        printAndExpr( AndExpression->prevAndExpr );
+
+    }
+
+}

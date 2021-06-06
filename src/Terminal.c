@@ -27,3 +27,9 @@ void freeTerminal( Terminal* term ) {
     term->regex = NULL;
 
 }
+
+void printTerminal( Terminal* term ) {
+
+    printf( "'%s'", term->regex );
+
+}
