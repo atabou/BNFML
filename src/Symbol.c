@@ -60,3 +60,17 @@ void freeSymbol(Symbol* symbol) {
     }
 
 }
+
+void printSymbol( Symbol* symbol ) {
+
+    if( symbol->type == TERM ) {
+
+        printTerminal( symbol->term );
+
+    } else {
+
+        printNonTerminal( symbol->nterm );
+
+    }
+
+}

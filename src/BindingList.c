@@ -44,3 +44,14 @@ void freeBindingList(BindingList* bindingList) {
     bindingList->prevBindings = NULL;
 
 }
+
+void printBindingList( BindingList* lst ) {
+
+    printBinding( lst->binding );
+
+    if( lst->prevBindings != NULL ) {
+        printf("\n");
+        printBindingList(lst->prevBindings);
+    }
+
+}

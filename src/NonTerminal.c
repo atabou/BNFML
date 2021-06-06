@@ -27,3 +27,9 @@ void freeNonTerminal( NonTerminal* nterm ) {
     nterm->Name = NULL;
     
 }
+
+void printNonTerminal( NonTerminal* nterm ) {
+
+    printf( "%s", nterm->Name );
+
+}

@@ -32,5 +32,12 @@ void freeBinding(Binding* binding) {
     freeOrExpr(binding->OrExpression);
     binding->OrExpression = NULL;
 
+}
+
+void printBinding( Binding* b ) {
+
+    printNonTerminal( b->nterm );
+    printf( " ::= " );
+    printOrExpr( b->OrExpression );
 
 }

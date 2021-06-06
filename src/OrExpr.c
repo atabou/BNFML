@@ -47,3 +47,16 @@ void freeOrExpr(OrExpr* OrExpression) {
     OrExpression->prevOrExpr = NULL;
 
 }
+
+void printOrExpr( OrExpr* OrExpression ) {
+
+    printAndExpr( OrExpression->AndExpression );
+
+    if( OrExpression->prevOrExpr != NULL ) {
+
+        printf(" | ");
+        printOrExpr(OrExpression->prevOrExpr);
+
+    }
+
+}
