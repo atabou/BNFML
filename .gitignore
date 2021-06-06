@@ -4,6 +4,7 @@ spec/*.pdf
 
 *.tab.*
 bnf.output
+bnf.dot
 
 lex.yy.c
 
