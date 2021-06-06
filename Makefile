@@ -35,7 +35,7 @@ ${OBJ}/bnf.tab.o: bnf.tab.c bnf.tab.h
 	gcc -c $< -o $@
 
 bnf.tab.c:	bnf.y ${INC}/BNF.h
-	bison -d -v bnf.y
+	bison -d -g -v bnf.y
 
 ${OBJ}/lex.yy.o: lex.yy.c bnf.tab.h
 	gcc -c $< -o $@
@@ -44,4 +44,4 @@ lex.yy.c: bnf.flex
 	flex bnf.flex
 
 clean:
-	rm bnf.tab.h bnf.tab.c bnf.output lex.yy.c obj/* bin/*
+	rm bnf.tab.h bnf.tab.c bnf.output bnf.dot lex.yy.c obj/* bin/*
