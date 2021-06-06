@@ -5,12 +5,15 @@
 
 #include "./include/BNF.h"
 
+#define YYDEBUG 1
+
 extern FILE *yyin;
 FILE* outFile;
 
 int yylex();
 void yyerror(const char* s);
 
+/* Extern Variables */
 unsigned int idGenerator;
 
 %}
@@ -35,7 +38,6 @@ unsigned int idGenerator;
 %token  <non_terminal_value>    NON_TERMINAL_VAL
 %token                          ASSIGN
 %token                          PIPE
-%token                          AND
 %token                          NL
 
 /* Non-Terminals */
@@ -59,12 +61,11 @@ unsigned int idGenerator;
 %left                           NL
 %left                           ASSIGN
 %left                           PIPE
-%left                           AND                       
 
 %%
 
 bnf
-    : binding_list                              {printf( "Done." ); freeBindingList($1);}
+    : binding_list                              { printBindingList($1); freeBindingList($1); free($1); }
     ;
 
 
@@ -74,30 +75,30 @@ binding_list
     ;
 
 binding
-    : non_terminal ASSIGN or_expression         { $$ = createBinding( $1, $3 ); }
+    : non_terminal ASSIGN or_expression         { $$ = createBinding( $1, $3 ); } 
     ;
 
 or_expression
-    : or_expression PIPE and_expression         { $$ = appendAndExpr( $1, $3 ); }
-    | and_expression                            { $$ = createOrExpr( $1 ); }
+    : or_expression PIPE and_expression         { $$ = appendAndExpr( $1, $3 ); } 
+    | and_expression                            { $$ = createOrExpr( $1 ); } 
     ;
 
 and_expression
-    : and_expression AND symbol                 { $$ = appendSymbol($1, $3); }
-    | symbol                                    { $$ = createAndExpr($1); }
+    : and_expression symbol                     { $$ = appendSymbol($1, $2); } 
+    | symbol                                    { $$ = createAndExpr($1); } 
     ; 
 
 symbol
-    : non_terminal                              { $$ = createNonTerminalSymbol($1); }
-    | terminal                                  { $$ = createTerminalSymbol($1); }
+    : non_terminal                              { $$ = createNonTerminalSymbol($1); } 
+    | terminal                                  { $$ = createTerminalSymbol($1); } 
     ;
 
 non_terminal
-    : TERMINAL_VAL                              { $$ = createNonTerminal($1); }
+    : NON_TERMINAL_VAL                          { $$ = createNonTerminal($1); }
     ;
 
 terminal
-    : NON_TERMINAL_VAL                          { $$ = createTerminal($1); }
+    : TERMINAL_VAL                              { $$ = createTerminal($1); }
     ;
 
 
@@ -105,22 +106,36 @@ terminal
 
 #include <stdlib.h>
 int main(int argc, char **argv){
+
+    #ifdef YYDEBUG
+        yydebug = 1;
+    #endif
+
+    // Initialise Global Variables;
     idGenerator = 0;
-    // const char* inFileName = (argc > 1)?argv[1]:"test.sml";
-    // const char* outFileName = (argc > 2)?argv[2]:"test.dot";
-    // yyin = fopen(inFileName, "r");
-    // outFile = fopen(outFileName, "w");
-    // fprintf(outFile, "digraph tree {\n");
-    // do {
-    //     yyparse();
-    // } while(!feof(yyin));
-    // fprintf(outFile, "}\n");
-    // fclose(yyin);
-    // fclose(outFile);
+
+    if( argc < 2 ) {
+        printf( "Please provide a file to process." );
+        exit(-1); 
+    }
+
+    const char* inFileName = argv[1];
+    yyin = fopen(inFileName, "r");
+    
+    do {
+        yyparse();
+    } while(!feof(yyin));
+    
+    fclose(yyin);
+
     return 0;
+
 }
 
 void yyerror(const char* s) {
+
+    printf( "ID Generator: %d\n", idGenerator );
     fprintf(stderr, "Parse error: %s\n", s);
     exit(1);
+
 }
