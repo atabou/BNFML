@@ -17,36 +17,78 @@
 /**
  * @brief Constructor to create an **AndExpr** object.
  * 
- * @param symbol A pointer to a **Symbol** object.
+ * @param term A pointer to a **Terminal** object.
  * @return AndExpr* Pointer to a newly created **AndExpr** object.
  */
-AndExpr* createAndExpr( Symbol* symbol ) {
+AndExpr* createTerminalAndExpr( Terminal* term ) {
 
     AndExpr* a = (AndExpr*) malloc(sizeof(AndExpr));
 
     a->id = idGenerator++;
     a->prevAndExpr = NULL;
-    a->symbol = symbol;
+    a->type = TERM;
+    a->term = term;
 
     return a;
 
 }
 
 /**
- * @brief Constructor to append a new **Symbol** to an existing **AndExpr** object.
+ * @brief Constructor to create an **AndExpr** object.
  * 
- * @param lst A pointer to an existing **AndExpr** object.
- * @param symbol A pointer to a **Symbol** object.
+ * @param nterm A pointer to a **NonTerminal** object.
  * @return AndExpr* Pointer to a newly created **AndExpr** object.
  */
-AndExpr* appendSymbol( AndExpr* lst, Symbol* symbol ) {
+AndExpr* createNonTerminalAndExpr( NonTerminal* nterm ) {
+
+    AndExpr* a = (AndExpr*) malloc(sizeof(AndExpr));
+
+    a->id = idGenerator++;
+    a->prevAndExpr = NULL;
+    a->type = NONTERM;
+    a->nterm = nterm;
+
+    return a;
+
+}
+
+
+/**
+ * @brief Constructor to append a new **Terminal** to an existing **AndExpr** object.
+ * 
+ * @param lst A pointer to an existing **AndExpr** object.
+ * @param term A pointer to a **Terminal** object.
+ * @return AndExpr* Pointer to a newly created **AndExpr** object.
+ */
+AndExpr* appendTerminal( AndExpr* lst, Terminal* term ) {
 
     AndExpr* a = (AndExpr*) malloc(sizeof(AndExpr));
 
     a->id = idGenerator++;
     a->prevAndExpr = lst;
-    a->symbol = symbol;
+    a->type = TERM;
+    a->term = term;
+    
+    return a;
 
+}
+
+/**
+ * @brief Constructor to append a new **NonTerminal** to an existing **AndExpr** object.
+ * 
+ * @param lst A pointer to an existing **AndExpr** object.
+ * @param nterm A pointer to a **NonTerminal** object.
+ * @return AndExpr* Pointer to a newly created **AndExpr** object.
+ */
+AndExpr* appendNonTerminal( AndExpr* lst, NonTerminal* nterm ) {
+
+    AndExpr* a = (AndExpr*) malloc(sizeof(AndExpr));
+
+    a->id = idGenerator++;
+    a->prevAndExpr = lst;
+    a->type = NONTERM;
+    a->nterm = nterm;
+    
     return a;
 
 }
@@ -58,9 +100,19 @@ AndExpr* appendSymbol( AndExpr* lst, Symbol* symbol ) {
  */
 void freeAndExpr(AndExpr* AndExpression) {
 
-    freeSymbol( AndExpression->symbol );
-    free( AndExpression->symbol );
-    AndExpression->symbol = NULL;
+    if( AndExpression->type == TERM ) {
+
+        freeTerminal( AndExpression->term );
+        free( AndExpression->term );
+        AndExpression->term = NULL;
+
+    } else {
+
+        freeNonTerminal( AndExpression->nterm );
+        free( AndExpression->nterm );
+        AndExpression->nterm = NULL;
+
+    }
 
     if( AndExpression->prevAndExpr != NULL ) {
         freeAndExpr( AndExpression->prevAndExpr );
@@ -78,7 +130,11 @@ void freeAndExpr(AndExpr* AndExpression) {
  */
 void printAndExpr( AndExpr* AndExpression ) {
 
-    printSymbol(AndExpression->symbol);
+    if( AndExpression->type == TERM ) {
+        printTerminal(AndExpression->term);
+    } else {
+        printNonTerminal(AndExpression->nterm);
+    }
 
     if( AndExpression->prevAndExpr != NULL ) {
 
@@ -98,8 +154,13 @@ void printAndExpr( AndExpr* AndExpression ) {
  */
 void buildAndExprArrows( AndExpr* AndExpression, FILE* fp, unsigned int id ) {
 
-    fprintf( fp, "%u -> %u;\n", id, AndExpression->symbol->id );
-    buildSymbolNode( AndExpression->symbol, fp );
+    if( AndExpression->type == TERM ) {
+        fprintf( fp, "%u -> %u [label=\"Terminal\"];\n", id, AndExpression->term->id );
+        buildTerminalNode( AndExpression->term, fp );
+    } else {
+        fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", id, AndExpression->nterm->id );
+        buildNonTerminalNode(AndExpression->nterm, fp);
+    }
 
     if( AndExpression->prevAndExpr != NULL ) {
         buildAndExprArrows( AndExpression->prevAndExpr, fp, id );

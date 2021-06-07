@@ -17,7 +17,6 @@
 
     typedef struct Terminal Terminal;
     typedef struct NonTerminal NonTerminal;
-    typedef struct Symbol Symbol;
     typedef struct AndExpr AndExpr;
     typedef struct OrExpr OrExpr;
     typedef struct Binding Binding;
@@ -81,9 +80,10 @@
 
 
     /**
-     * \addtogroup Symbol
+     * \addtogroup AndExpression
      * @{
      */
+
 
     /**
      * @enum SymbolType
@@ -98,38 +98,6 @@
     };
 
     /**
-     * @struct **Symbol**
-     * @brief struct to define a parsed **Symbol** value in BNFML
-     * 
-     */
-    struct Symbol {
-
-        unsigned int id; /**< Global ID of the object. see: idGenerator*/
-        enum SymbolType type; /**< Enum **SymbolType** used to determine the type of symbol this object contains */
-        union {
-            NonTerminal* nterm; /**< A pointer to a **NonTerminal** object.*/
-            Terminal* term; /**< A pointer to a **Terminal** object.*/
-        };
-
-    }; 
-    
-    Symbol* createNonTerminalSymbol( NonTerminal* nterm );
-    Symbol* createTerminalSymbol( Terminal* term );
-
-    void freeSymbol( Symbol* symbol );
-    void printSymbol( Symbol* symbol );
-    void buildSymbolNode( Symbol* symbol, FILE* fp );
-
-    /** @} */
-
-
-
-    /**
-     * \addtogroup AndExpression
-     * @{
-     */
-
-    /**
      * @struct **AndExpr**
      * @brief struct to define a parsed **AndExpr** value in BNFML
      * 
@@ -138,12 +106,19 @@
 
         unsigned int id; /**< Global ID of the object. see: idGenerator*/
         AndExpr* prevAndExpr; /**< A pointer to an **AndExpr** object.*/
-        Symbol* symbol; /**< A pointer to a **Symbol** object.*/
+        enum SymbolType type; /**< Enum **SymbolType** used to determine the type of symbol this object contains */
+        union {
+            NonTerminal* nterm; /**< A pointer to a **NonTerminal** object.*/
+            Terminal* term; /**< A pointer to a **Terminal** object.*/
+        };
 
     }; 
     
-    AndExpr* createAndExpr( Symbol* symbol );
-    AndExpr* appendSymbol( AndExpr* lst, Symbol* symbol );
+    AndExpr* createTerminalAndExpr( Terminal* term );
+    AndExpr* createNonTerminalAndExpr( NonTerminal* nterm );
+
+    AndExpr* appendTerminal( AndExpr* lst, Terminal* term );
+    AndExpr* appendNonTerminal( AndExpr* lst, NonTerminal* nterm );
     
     void freeAndExpr(AndExpr* AndExpression);
     void printAndExpr( AndExpr* AndExpression );

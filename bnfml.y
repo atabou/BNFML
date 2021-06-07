@@ -28,7 +28,6 @@ unsigned int idGenerator;
     Binding*                    binding;
     OrExpr*                     orExpr;
     AndExpr*                    andExpr;
-    Symbol*                     symbol;
     NonTerminal*                nonTerm;
     Terminal*                   term;
 
@@ -48,7 +47,6 @@ unsigned int idGenerator;
 %type   <binding>               binding
 %type   <orExpr>                or_expression
 %type   <andExpr>               and_expression
-%type   <symbol>                symbol
 %type   <nonTerm>               non_terminal
 %type   <term>                  terminal
 
@@ -86,14 +84,11 @@ or_expression
     ;
 
 and_expression
-    : and_expression symbol                     { $$ = appendSymbol($1, $2); } 
-    | symbol                                    { $$ = createAndExpr($1); } 
+    : and_expression non_terminal               { $$ = appendNonTerminal($1, $2); }
+    | and_expression terminal                   { $$ = appendTerminal($1, $2); }
+    | non_terminal                              { $$ = createNonTerminalAndExpr($1); }
+    | terminal                                  { $$ = createTerminalAndExpr($1); }
     ; 
-
-symbol
-    : non_terminal                              { $$ = createNonTerminalSymbol($1); } 
-    | terminal                                  { $$ = createTerminalSymbol($1); } 
-    ;
 
 non_terminal
     : NON_TERMINAL_VAL                          { $$ = createNonTerminal($1); }

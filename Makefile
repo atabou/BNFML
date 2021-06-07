@@ -5,7 +5,7 @@ SRC=./src
 OBJ=./obj
 EXE=./bin
 
-COMPILE=${OBJ}/AndExpr.o ${OBJ}/Binding.o ${OBJ}/BindingList.o ${OBJ}/NonTerminal.o ${OBJ}/OrExpr.o ${OBJ}/Symbol.o ${OBJ}/Terminal.o ${OBJ}/bnfml.tab.o ${OBJ}/lex.yy.o
+COMPILE=${OBJ}/AndExpr.o ${OBJ}/Binding.o ${OBJ}/BindingList.o ${OBJ}/NonTerminal.o ${OBJ}/OrExpr.o ${OBJ}/Terminal.o ${OBJ}/bnfml.tab.o ${OBJ}/lex.yy.o
 
 ${EXE}/bnfml: ${COMPILE}
 	gcc -Iinclude -o bin/bnfml ${COMPILE}
@@ -23,9 +23,6 @@ ${OBJ}/NonTerminal.o: ${SRC}/NonTerminal.c ${INC}/BNF.h
 	gcc -Iinclude -c $< -o $@
 
 ${OBJ}/OrExpr.o: ${SRC}/OrExpr.c ${INC}/BNF.h
-	gcc -Iinclude -c $< -o $@
-
-${OBJ}/Symbol.o: ${SRC}/Symbol.c ${INC}/BNF.h
 	gcc -Iinclude -c $< -o $@
 
 ${OBJ}/Terminal.o: ${SRC}/Terminal.c ${INC}/BNF.h
