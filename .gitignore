@@ -17,3 +17,6 @@ lex.yy.c
 # General Files to exclude
 *.o
 bin/bnfml
+
+# Documentation Folder
+docs/
