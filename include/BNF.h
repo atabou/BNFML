@@ -31,6 +31,7 @@
      */
 
     /**
+     * @struct **Terminal**
      * @brief struct to define a parsed **Terminal** value in BNFML
      * 
      */
@@ -57,6 +58,7 @@
      */
 
     /**
+     * @struct **NonTerminal**
      * @brief struct to define a parsed **NonTerminal** object in BNFML
      * 
      */
@@ -84,17 +86,19 @@
      */
 
     /**
+     * @enum SymbolType
      * @brief Enum to represent the types a symbol can be.
      * 
      */
     enum SymbolType {
 
-        TERM,
-        NONTERM
+        TERM, /**< Enum value to reprsent a **Terminal** value. */
+        NONTERM /**< Enum value to represent a **NonTerminal** value. */
 
     };
 
     /**
+     * @struct **Symbol**
      * @brief struct to define a parsed **Symbol** value in BNFML
      * 
      */
@@ -126,6 +130,7 @@
      */
 
     /**
+     * @struct **AndExpr**
      * @brief struct to define a parsed **AndExpr** value in BNFML
      * 
      */
@@ -152,6 +157,7 @@
      */
 
     /**
+     * @struct **OrExpr**
      * @brief struct to define a parsed **OrExpr** value in BNFML
      * 
      */
@@ -180,6 +186,7 @@
      */
 
     /**
+     * @struct **Binding**
      * @brief struct to define a parsed **Binding** value in BNFML
      * 
      */
@@ -207,6 +214,7 @@
      */
 
     /**
+     * @struct **BindingList**
      * @brief struct to define a parsed **BindingList** value in BNFML
      * 
      */
