@@ -34,6 +34,13 @@ OR                      [\n\t\r ]*\|[\n\t\r ]*
 
 %%
 
+/**
+ * @brief Function that concatenates two string.
+ *
+ * @param s String that will be concatenated from the left. (Can be null)
+ * @param cat String that will be concatenated from the right.
+ * @return char* String representing the two concatenated letters.
+ */
 char* concatenateStrings( char* s, char* cat ) {
 
     if( s == NULL ) {
