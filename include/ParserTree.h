@@ -9,9 +9,9 @@
  * @bug No known bugs.
  */
 
-#ifndef BNF
+#ifndef PARSER_TREE
     
-    #define BNF
+    #define PARSER_TREE
 
     #include <stdlib.h>
 
