@@ -11,6 +11,10 @@ FILE* outFile;
 int yylex();
 void yyerror(const char* s);
 
+
+/* Function Declarations */
+void doThis( BindingList* lst );
+
 /* Extern Variables */
 unsigned int idGenerator;
 
@@ -63,7 +67,7 @@ unsigned int idGenerator;
 %%
 
 bnf
-    : binding_list                              { printBindingList($1); freeBindingList($1); free($1); }
+    : binding_list                              { doThis($1); }
     ;
 
 
@@ -103,6 +107,24 @@ terminal
 %%
 
 #include <stdlib.h>
+
+void doThis( BindingList* lst ) {
+
+    printBindingList( lst );
+
+    FILE* fp = fopen( "log/ParseTree.dot", "w" );
+    
+    fprintf( fp, "digraph tree {\n" );
+    buildBindingListNode( lst, fp );
+    fprintf( fp, "}\n" );
+
+    fclose(fp);
+
+    freeBindingList( lst );
+    free( lst ); 
+
+}
+
 int main(int argc, char **argv){
 
     // Initialise Global Variables;
