@@ -24,6 +24,12 @@
     typedef struct BindingList BindingList;
 
 
+
+    /**
+     * \addtogroup Terminal
+     * @{
+     */
+
     /**
      * @brief struct to define a parsed **Terminal** value in BNFML
      * 
@@ -41,6 +47,14 @@
     void printTerminal( Terminal* term );
     void buildTerminalNode( Terminal* term, FILE* fp );
 
+    /** @} */
+
+
+
+    /**
+     * \addtogroup NonTerminal
+     * @{
+     */
 
     /**
      * @brief struct to define a parsed **NonTerminal** object in BNFML
@@ -60,6 +74,14 @@
     void printNonTerminal( NonTerminal* nterm );
     void buildNonTerminalNode( NonTerminal* nterm, FILE* fp );
 
+    /** @} */
+
+
+
+    /**
+     * \addtogroup Symbol
+     * @{
+     */
 
     /**
      * @brief Enum to represent the types a symbol can be.
@@ -94,6 +116,14 @@
     void printSymbol( Symbol* symbol );
     void buildSymbolNode( Symbol* symbol, FILE* fp );
 
+    /** @} */
+
+
+
+    /**
+     * \addtogroup AndExpression
+     * @{
+     */
 
     /**
      * @brief struct to define a parsed **AndExpr** value in BNFML
@@ -114,6 +144,12 @@
     void printAndExpr( AndExpr* AndExpression );
     void buildAndExprNode( AndExpr* AndExpression, FILE* fp );
 
+    /** @} */
+
+    /**
+     * \addtogroup OrExpression
+     * @{
+     */
 
     /**
      * @brief struct to define a parsed **OrExpr** value in BNFML
@@ -134,6 +170,14 @@
     void printOrExpr( OrExpr* OrExpression );
     void buildOrExprNode( OrExpr* OrExpression, FILE* fp );
 
+    /** @} */
+
+
+
+    /**
+     * \addtogroup Binding
+     * @{
+     */
 
     /**
      * @brief struct to define a parsed **Binding** value in BNFML
@@ -153,6 +197,14 @@
     void printBinding( Binding* b );
     void buildBindingNode( Binding* b, FILE* fp );
 
+    /** @} */
+
+
+
+    /**
+     * \addtogroup BindingList
+     * @{
+     */
 
     /**
      * @brief struct to define a parsed **BindingList** value in BNFML
@@ -172,6 +224,8 @@
     void freeBindingList( BindingList* bindingList );
     void printBindingList( BindingList* lst );
     void buildBindingListNode( BindingList* lst, FILE* fp );
+
+    /** @} */
 
     extern unsigned int idGenerator;
 
