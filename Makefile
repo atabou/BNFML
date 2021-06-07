@@ -2,11 +2,15 @@
 
 INC=./include
 PTREE=./src/ParserTree
+ETREE=./src/ExecutionTree
 GEN=./src/Generated
 OBJ=./obj
 EXE=./bin
 
-COMPILE=${OBJ}/AndExpr.o ${OBJ}/Binding.o ${OBJ}/BindingList.o ${OBJ}/NonTerminal.o ${OBJ}/OrExpr.o ${OBJ}/Terminal.o ${OBJ}/bnfml.tab.o ${OBJ}/lex.yy.o
+COMPILE=${OBJ}/AndExpr.o ${OBJ}/Binding.o ${OBJ}/BindingList.o ${OBJ}/NonTerminal.o ${OBJ}/OrExpr.o ${OBJ}/Terminal.o ${OBJ}/bnfml.tab.o ${OBJ}/lex.yy.o ${OBJ}/ExecutionNode.o ${OBJ}/ExecutionTree.o
+
+
+
 
 ${EXE}/bnfml: ${COMPILE}
 	gcc -Iinclude -o bin/bnfml ${COMPILE}
@@ -28,6 +32,18 @@ ${OBJ}/OrExpr.o: ${PTREE}/OrExpr.c ${INC}/ParserTree.h
 
 ${OBJ}/Terminal.o: ${PTREE}/Terminal.c ${INC}/ParserTree.h
 	gcc -Iinclude -c $< -o $@
+
+
+
+
+${OBJ}/ExecutionNode.o: ${ETREE}/ExecutionNode.c ${INC}/ParserTree.h ${INC}/ExecutionTree.h
+	gcc -Iinclude -c $< -o $@
+
+${OBJ}/ExecutionTree.o: ${ETREE}/ExecutionTree.c ${INC}/ParserTree.h ${INC}/ExecutionTree.h
+	gcc -Iinclude -c $< -o $@
+
+
+
 
 ${OBJ}/bnfml.tab.o: ${GEN}/bnfml.tab.c ${INC}/bnfml.tab.h
 	gcc -Iinclude -c $< -o $@

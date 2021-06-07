@@ -207,6 +207,8 @@
     void freeBindingList( BindingList* bindingList );
     void printBindingList( BindingList* lst );
     void buildBindingListNode( BindingList* lst, FILE* fp );
+    Binding* verifyUniquenessOfBindings( BindingList* lst );
+    Binding* searchForBinding( BindingList* lst, char* nterm );
 
     /** @} */
 

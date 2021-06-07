@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "ParserTree.h"
 
@@ -136,5 +137,66 @@ void buildBindingListNode( BindingList* lst, FILE* fp ) {
 
     fprintf( fp, "%u [label=\"%s\"];\n", lst->id, "Binding List" );
     buildBindingListArrows( lst, fp, lst->id );
+
+}
+
+/**
+ * @brief Verifies that a **BindingList** has no **Binding** with the same **NonTerminal** value.
+ * 
+ * @param lst A pointer to a **BindingList**
+ * @return Binding* A pointe The first duplicate Binding  
+ */
+Binding* verifyUniquenessOfBindings( BindingList* lst ) {
+
+    Binding* b = NULL;
+
+    BindingList* slow = lst;
+    while( slow != NULL ) {
+
+        BindingList* fast = slow->prevBindings;
+
+        while( fast != NULL ) {
+
+            if( strcmp( fast->binding->nterm->Name, slow->binding->nterm->Name ) ) {
+                b = slow->binding;
+                break;
+            }
+
+            fast = fast->prevBindings;
+
+        }
+
+        slow = slow->prevBindings;
+
+    }
+
+}
+
+
+/**
+ * @brief Searches through a **BindingList** for a **Binding** with a specified **NonTerminal** value.
+ * 
+ * @param lst A pointer to a **BindingList**.
+ * @param nterm A string representing the value of the **NonTerminal** to search for.
+ * 
+ * @return Binding* A pointer to the binding containing the **NonTerminal** we searched for.
+ */
+Binding* searchForBinding( BindingList* lst, char* nterm ) {
+
+    Binding* b = NULL;
+
+    BindingList* current = lst;
+    while( current != NULL ) {
+
+        if( strcmp(current->binding->nterm->Name, nterm)  ) {
+            b = current->binding;
+            break;
+        }
+
+        current = current->prevBindings;
+
+    }
+
+    return b;
 
 }

@@ -17,6 +17,7 @@ void doThis( BindingList* lst );
 
 /* Extern Variables */
 unsigned int idGenerator;
+unsigned int executionTreeIDGenerator;
 
 %}
 
@@ -124,6 +125,7 @@ int main(int argc, char **argv){
 
     // Initialise Global Variables;
     idGenerator = 0;
+    executionTreeIDGenerator = 0;
 
     if( argc < 2 ) {
         printf( "Please provide a file to process." );
