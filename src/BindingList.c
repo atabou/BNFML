@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "BNF.h"
+#include "ParserTree.h"
 
 /**
  * @brief Constructor to create a **Binding** object.

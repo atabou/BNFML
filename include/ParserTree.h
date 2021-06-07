@@ -1,7 +1,7 @@
 
 /**
  * 
- * @file BNF.h
+ * @file ParserTree.h
  * @author Andre Tabourian
  * @version 0.0.1
  * @date 6 Jun 2021

@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "BNF.h"
+#include "ParserTree.h"
 #include "bnfml.tab.h"
 
 char* iterateOverTerminal();

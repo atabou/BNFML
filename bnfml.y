@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "BNF.h"
+#include "ParserTree.h"
 
 extern FILE *yyin;
 FILE* outFile;
