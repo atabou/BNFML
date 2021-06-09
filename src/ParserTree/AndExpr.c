@@ -17,18 +17,6 @@
 #include "ParserTree/NonTerminal.h"
 #include "Common.h"
 
-/**
- * @enum SymbolType
- * @brief Enum to represent the types a symbol can be.
- * 
- */
-enum SymbolType {
-
-    TERMINAL_SYMBOL, /**< Enum value to reprsent a **Terminal** value. */
-    NON_TERMINAL_SYMBOL /**< Enum value to represent a **NonTerminal** value. */
-
-};
-
 typedef struct Symbol {
 
     enum SymbolType type; /**< Enum **SymbolType** used to determine the type of symbol this object contains */
@@ -164,6 +152,64 @@ AndExpr* append_ToAndExpr_NonTerminal( AndExpr* expr, NonTerminal* nterm ) {
 unsigned int getAndExpr_id( AndExpr* expr ) {
     return expr->id;
 }
+
+enum SymbolType getAndExpr_type( AndExpr* expr, int i ) {
+
+    if( i < 0 || i >= expr->n ) {
+
+        printf( "Invalid integer argument: %d. Must be between 0 and %d. (getAndExpr_id)\n", i, expr->n );
+        exit(-1);
+
+    }
+
+    return expr->branches[i]->type;
+
+}
+
+Terminal* getAndExpr_term( AndExpr* expr, int i ) {
+
+    if( i < 0 || i >= expr->n ) {
+
+        printf( "[ERROR] Invalid integer argument: %d. Must be between 0 and %d. (getAndExpr_term)\n", i, expr->n );
+        exit(-1);
+
+    }
+
+    if( expr->branches[i]->type == NON_TERMINAL_SYMBOL ) {
+
+        printf( "[ERROR] The Symbol at %d is not a Terminal. (getAndExpr_term)\n", i );
+        exit(-1);
+
+    }
+
+    return expr->branches[i]->term;
+
+}
+
+NonTerminal* getAndExpr_nterm( AndExpr* expr, int i ) {
+
+    if( i < 0 || i >= expr->n ) {
+
+        printf( "[ERROR] Invalid integer argument: %d. Must be between 0 and %d. (getAndExpr_nterm)\n", i, expr->n );
+        exit(-1);
+
+    }
+
+    if( expr->branches[i]->type == TERMINAL_SYMBOL ) {
+
+        printf( "[ERROR] The Symbol at %d is not a NonTerminal. (getAndExpr_nterm)\n", i );
+        exit(-1);
+
+    }
+
+    return expr->branches[i]->nterm;
+
+}
+
+int getAndExpr_length( AndExpr* expr ) {
+    return expr->n;
+}
+
 
 /**
  * @brief Destructor for an **AndExpr** object.

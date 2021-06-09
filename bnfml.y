@@ -5,7 +5,7 @@
 
 #include "Common.h"
 #include "ParserTree.h"
-// #include "ExecutionGraph.h"
+#include "ExecutionGraph.h"
 
 extern FILE *yyin;
 FILE* outFile;
@@ -19,6 +19,7 @@ void doThis( BindingList* lst );
 
 /* Extern Variables */
 unsigned int ParserID_Generator;
+unsigned int ExecutionID_Generator;
 // unsigned int executionTreeIDGenerator;
 
 %}
@@ -118,12 +119,12 @@ void doThis( BindingList* lst ) {
 
     fclose(fp);
 
-    /* ExecutionGraph* G = buildExecutionGraph( lst ); */
+    ExecutionGraph* G = buildExecutionGraph( lst );
 
     freeBindingList( lst );
     free( lst ); 
 
-    /* fp = fopen( "log/ExecutionGraph.dot", "w" );
+    fp = fopen( "log/ExecutionGraph.dot", "w" );
 
     fprintf( fp, "digraph tree {\n" );
     buildGraphvizExecutionGraphRepresentation( G, fp );
@@ -132,7 +133,7 @@ void doThis( BindingList* lst ) {
     fclose(fp);
 
     freeExecutionGraph( G );
-    free( G ); */
+    free( G );
 
 }
 
@@ -140,7 +141,7 @@ int main(int argc, char **argv){
 
     // Initialise Global Variables;
     ParserID_Generator = 0;
-    /* executionTreeIDGenerator = 0; */
+    ExecutionID_Generator = 0;
 
     if( argc < 2 ) {
         printf( "Please provide a file to process." );

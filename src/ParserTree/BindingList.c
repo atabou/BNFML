@@ -145,63 +145,63 @@ void build_Graphviz_BindingList( BindingList* lst, FILE* fp ) {
 
 }
 
-// /**
-//  * @brief Verifies that a **BindingList** has no **Binding** with the same **NonTerminal** value.
-//  * 
-//  * @param lst A pointer to a **BindingList**
-//  * @return Binding* A pointe The first duplicate Binding  
-//  */
-// Binding* verifyUniquenessOfBindings( BindingList* lst ) {
+/**
+ * @brief Verifies that a **BindingList** has no **Binding** with the same **NonTerminal** value.
+ * 
+ * @param lst A pointer to a **BindingList**
+ * @return Binding* A pointe The first duplicate Binding  
+ */
+Binding* verifyUniquenessOfBindings( BindingList* lst ) {
 
-//     Binding* b = NULL;
+    Binding* b = NULL;
 
-//     BindingList* slow = lst;
-//     while( slow != NULL ) {
+    BindingList* slow = lst;
+    while( slow != NULL ) {
 
-//         BindingList* fast = slow->prevBindings;
+        BindingList* fast = slow->prevBindings;
 
-//         while( fast != NULL ) {
+        while( fast != NULL ) {
 
-//             if( strcmp( fast->binding fast->binding->nterm->Name, slow->binding->nterm->Name ) == 0 ) {
-//                 b = slow->binding;
-//                 break;
-//             }
+            if( strcmp( getNonTerminal_name(getBinding_nterm( fast->binding )) , getNonTerminal_name(getBinding_nterm( slow->binding )) ) == 0 ) {
+                b = slow->binding;
+                break;
+            }
 
-//             fast = fast->prevBindings;
+            fast = fast->prevBindings;
 
-//         }
+        }
 
-//         slow = slow->prevBindings;
+        slow = slow->prevBindings;
 
-//     }
+    }
 
-// }
+}
 
 
-// /**
-//  * @brief Searches through a **BindingList** for a **Binding** with a specified **NonTerminal** value.
-//  * 
-//  * @param lst A pointer to a **BindingList**.
-//  * @param nterm A string representing the value of the **NonTerminal** to search for.
-//  * 
-//  * @return Binding* A pointer to the binding containing the **NonTerminal** we searched for.
-//  */
-// Binding* searchForBinding( BindingList* lst, char* nterm ) {
+/**
+ * @brief Searches through a **BindingList** for a **Binding** with a specified **NonTerminal** value.
+ * 
+ * @param lst A pointer to a **BindingList**.
+ * @param nterm A string representing the value of the **NonTerminal** to search for.
+ * 
+ * @return Binding* A pointer to the binding containing the **NonTerminal** we searched for.
+ */
+Binding* search_InBindignList( BindingList* lst, char* name ) {
 
-//     Binding* b = NULL;
+    Binding* b = NULL;
 
-//     BindingList* current = lst;
-//     while( current != NULL ) {
+    BindingList* current = lst;
+    while( current != NULL ) {
 
-//         if( strcmp(current->binding->nterm->Name, nterm) == 0  ) {
-//             b = current->binding;
-//             break;
-//         }
+        if( strcmp( getNonTerminal_name(getBinding_nterm( current->binding )), name ) == 0  ) {
+            b = current->binding;
+            break;
+        }
 
-//         current = current->prevBindings;
+        current = current->prevBindings;
 
-//     }
+    }
 
-//     return b;
+    return b;
 
-// }
+}

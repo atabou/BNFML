@@ -44,7 +44,7 @@
     void build_Graphviz_BindingList( BindingList* lst, FILE* fp );
 
     Binding* verifyUniquenessOfBindings( BindingList* lst );
-    Binding* searchForBinding( BindingList* lst, char* nterm );
+    Binding* search_InBindignList( BindingList* lst, char* nterm );
 
     void freeBindingList( BindingList* bindingList );
     

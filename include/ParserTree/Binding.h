@@ -27,6 +27,9 @@
     Binding* new_Binding( NonTerminal* nterm, OrExpr* OrExpression );
     
     unsigned int getBinding_id( Binding* b );
+    NonTerminal* getBinding_nterm( Binding* b );
+    OrExpr* getBinding_OrExpr( Binding* b );
+    
 
     void freeBinding( Binding* binding );
     void printBinding( Binding* b );

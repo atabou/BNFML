@@ -79,6 +79,14 @@ unsigned int getOrExpr_id( OrExpr* expr ) {
     return expr->id;
 }
 
+AndExpr** getOrExpr_branches( OrExpr* expr ) {
+    return expr->branches;
+}
+
+int getOrExpr_num_branches( OrExpr* expr ) {
+    return expr->n;
+}
+
 
 /**
  * @brief Destructor for an **OrExpr** object.

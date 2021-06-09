@@ -27,6 +27,8 @@
     OrExpr* append_ToOrExpr_AndExpr( OrExpr* expr, AndExpr* AndExpression );
     
     unsigned int getOrExpr_id( OrExpr* expr );
+    AndExpr** getOrExpr_branches( OrExpr* expr );
+    int getOrExpr_num_branches( OrExpr* expr );
 
     void freeOrExpr( OrExpr* OrExpression );
     void printOrExpr( OrExpr* OrExpression );

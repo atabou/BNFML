@@ -20,16 +20,12 @@
 ExecutionGraph* createExecutionGraph( ExecutionNode* node, ExecutionGraph* DirectParent );
 int appendNewBranch( ExecutionGraph* tree, ExecutionGraph* branch );
 
-ExecutionGraph* exploreOrExpr( OrExpr* OrExpression, ExecutionGraph* DirectParent, BindingList* lst );
-ExecutionGraph* exploreOrExpr_Recursive( OrExpr* OrExpression, ExecutionGraph* DirectParent, BindingList* lst );
+void exploreOrExpr( OrExpr* OrExpression, ExecutionGraph* DirectParent, BindingList* lst );
+void exploreAndExpr( AndExpr* a, ExecutionGraph* DirectParent, BindingList* lst );
+void exploreNonTerminal( NonTerminal* nterm, ExecutionGraph* DirectParent, BindingList* lst );
+void exploreTerminal( Terminal* term, ExecutionGraph* DirectParent );
 
-ExecutionGraph* exploreAndExpr( AndExpr* a, ExecutionGraph* DirectParent, BindingList* lst );
-ExecutionGraph* exploreAndExpr_Recursive( AndExpr* a, ExecutionGraph* DirectParent, BindingList* lst );
-
-ExecutionGraph* exploreNonTerminal( BindingList* lst,  NonTerminal* nterm, ExecutionGraph* DirectParent );
 ExecutionGraph* verfifyRecursiveness( ExecutionGraph* tree, char* nterm );
-
-ExecutionGraph* exploreTerminal( Terminal* term, ExecutionGraph* DirectParent );
 
 typedef struct ExecutionGraphNodeList ExecutionGraphNodeList;
 ExecutionGraph* ExecutionGraphBFS( ExecutionGraph* tree, ExecutionGraph** lst, int* n );
@@ -69,7 +65,9 @@ ExecutionGraph* buildExecutionGraph( BindingList* lst ) {
 
     if( unique != NULL ) {
 
-        printf( "\n[Error] Non-Terminal: %s, has two assignments.\n", unique->nterm->Name );
+        char* nterm = getNonTerminal_name( getBinding_nterm( unique ) );
+
+        printf( "\n[Error] Non-Terminal: %s, has two assignments.\n", nterm );
         exit(-1);
     
     } else {
@@ -78,7 +76,7 @@ ExecutionGraph* buildExecutionGraph( BindingList* lst ) {
     
     }
 
-    Binding* start = searchForBinding( lst, "<bnf>" );
+    Binding* start = search_InBindignList( lst, "<bnf>" );
 
     if( start == NULL ) {
     
@@ -87,28 +85,26 @@ ExecutionGraph* buildExecutionGraph( BindingList* lst ) {
     
     } else {
     
-        printf( "%s\n", start->nterm->Name );
+        printf( "%s\n", getNonTerminal_name( getBinding_nterm(start) ) );
         printf( "[SUCCESS] Starting Non-Terminal <bnf> found.\n" );
     
     }
 
-    ExecutionNode* NonTerminalNode = createNonTerminalExecutionNode( start->nterm );
+    ExecutionNode* NonTerminalNode = createNonTerminalExecutionNode( getBinding_nterm(start) );
 
     printf( "[SUCCESS] Initialised <bnf> Non-Terminal node.\n" );
 
-    ExecutionGraph* tree = createExecutionGraph( NonTerminalNode, NULL );
+    ExecutionGraph* G = createExecutionGraph( NonTerminalNode, NULL );
 
     printf( "[SUCCESS] Successfully initialised the execution graph.\n" );
 
-    ExecutionGraph* OrTree = exploreOrExpr( start->OrExpression, tree, lst );
+    exploreOrExpr( getBinding_OrExpr( start ), G, lst );
 
     printf( "[SUCCESS] Finished exploring the bindings.\n" );
 
-    appendNewBranch( tree, OrTree );
-
     printf( "[SUCCESS] Successfully finished building the execution tree.\n" );
 
-    return tree;
+    return G;
 
 }
 
@@ -205,6 +201,7 @@ ExecutionGraph* createExecutionGraph( ExecutionNode* node, ExecutionGraph* Direc
     tree->Branches = NULL;
 
     tree->DirectParent = DirectParent;
+    tree->visited = 0;
 
     return tree;
 
@@ -252,63 +249,32 @@ int appendNewBranch( ExecutionGraph* tree, ExecutionGraph* branch ) {
  * @param lst A pointer to the **BindingList** being processed.
  * @return ExecutionGraph* A pointer to a newly created **ExecutionGraph** object.
  */
-ExecutionGraph* exploreOrExpr( OrExpr* OrExpression, ExecutionGraph* DirectParent, BindingList* lst  ) {
+void exploreOrExpr( OrExpr* OrExpression, ExecutionGraph* DirectParent, BindingList* lst  ) {
 
-    printf( "Exploring OrTree: %u\n", OrExpression->id );
+    AndExpr** branches = getOrExpr_branches( OrExpression );
 
-    if( OrExpression->prevOrExpr != NULL ) {
+    if ( getOrExpr_num_branches( OrExpression ) == 1 ) {
 
-        printOrExpr( OrExpression );
+        printf( "Starting exploration of AND expression, id: %d\n", getAndExpr_id( branches[0] ) );
+        exploreAndExpr( branches[0], DirectParent, lst );
+        printf( "[SUCCESS] Finished exploration of AND expression, id: %d\n", getAndExpr_id( branches[0] ) );
 
-        ExecutionGraph* OrTree = exploreOrExpr_Recursive( OrExpression->prevOrExpr, DirectParent, lst );
-        
-        ExecutionGraph* AndTree = exploreAndExpr( OrExpression->AndExpression, OrTree, lst );
-        appendNewBranch( OrTree, AndTree );
-
-        return OrTree;
-        
     } else {
-
-        ExecutionGraph* OrTree = exploreAndExpr( OrExpression->AndExpression, OrTree, lst );
-        return OrTree;
-
-    }
-
-    printf( "Finished OrTree: %u\n", OrExpression->id );
-
-}
-
-/**
- * @brief Creates an **ExecutionGraph** representing a **OrExpr** object. (Helper method for **exploreOrExpr**)
- * 
- * @param OrExpression A pointer to an **OrExpr** object.
- * @param DirectParent A pointer to the direct parent of the object to be created in the **ExecutionGraph**.
- * @param lst A pointer to the **BindingList** being processed.
- * @return ExecutionGraph* A pointer to a newly created **ExecutionGraph** object.
- */
-ExecutionGraph* exploreOrExpr_Recursive( OrExpr* OrExpression, ExecutionGraph* DirectParent, BindingList* lst ) {
-
-    printf( "Exploring Rec OrTree: %u\n", OrExpression->id );
-
-    if( OrExpression == NULL ) {
 
         ExecutionNode* OrNode = createOrExecutionNode( );
-        ExecutionGraph* OrTree = createExecutionGraph( OrNode, DirectParent );
+        ExecutionGraph* OrGraph = createExecutionGraph( OrNode, DirectParent );
 
-        return OrTree;
+        for( int i=0; i<getOrExpr_num_branches(OrExpression); i++ ) {
 
-    } else {
+            printf( "Starting exploration of AND expression, id: %d\n", getAndExpr_id( branches[i] ) );
+            exploreAndExpr( branches[i], OrGraph, lst );
+            printf( "[SUCCESS] Finished exploration of AND expression, id: %d\n", getAndExpr_id( branches[i] ) );
 
-        ExecutionGraph* OrTree =  exploreOrExpr_Recursive( OrExpression->prevOrExpr, DirectParent, lst );        
-        
-        ExecutionGraph* AndTree = exploreAndExpr( OrExpression->AndExpression, OrTree, lst );
-        appendNewBranch( OrTree, AndTree );
+        }
 
-        return OrTree;
+        appendNewBranch( DirectParent, OrGraph );
 
     }
-
-    printf( "Finished Rec OrTree: %u\n", OrExpression->id );
 
 }
 
@@ -318,94 +284,64 @@ ExecutionGraph* exploreOrExpr_Recursive( OrExpr* OrExpression, ExecutionGraph* D
  * @param AndExpression A pointer to an **AndExpr** object.
  * @param DirectParent A pointer to the direct parent of the object to be created in the **ExecutionGraph**.
  * @param lst A pointer to the **BindingList** being processed.
- * @return ExecutionGraph* A pointer to a newly created **ExecutionGraph** object.
  */
-ExecutionGraph* exploreAndExpr( AndExpr* AndExpression, ExecutionGraph* DirectParent, BindingList* lst ) {
+void exploreAndExpr( AndExpr* expr, ExecutionGraph* DirectParent, BindingList* lst ) {
 
-    printf( "Exploring AndTree: %u\n", AndExpression->id );
+    int n = getAndExpr_length(expr);
 
-    if( AndExpression->prevAndExpr != NULL ) {
+    if( n == 1 ) {
 
-        ExecutionGraph* AndTree = exploreAndExpr_Recursive( AndExpression->prevAndExpr, DirectParent, lst );
+        if( getAndExpr_type(expr, 0) == TERMINAL_SYMBOL ) {
 
-        if( AndExpression->type == TERM ) {
-            
-            ExecutionGraph* TerminalTree = exploreTerminal( AndExpression->term, AndTree );
-            appendNewBranch( AndTree, TerminalTree );
+            Terminal* term = getAndExpr_term( expr, 0 );
 
-        } else {
+            printf( "Starting exploration of Terminal: %s, id: %d\n", getTerminal_value(term), getTerminal_id(term) );
+            exploreTerminal( term, DirectParent );
+            printf( "[SUCCESS] Finished exploration of Terminal: %s, id: %d\n", getTerminal_value(term), getTerminal_id(term) );
 
-            ExecutionGraph* NonTerminalTree = exploreNonTerminal(lst, AndExpression->nterm, AndTree);
-            appendNewBranch( AndTree, NonTerminalTree );
+        } else if( getAndExpr_type(expr, 0) == NON_TERMINAL_SYMBOL ) {
+
+            NonTerminal* nterm = getAndExpr_nterm( expr, 0 );
+
+            printf( "Starting exploration of Non-Terminal: %s, id: %d\n", getNonTerminal_name(nterm), getNonTerminal_id(nterm) );
+            exploreNonTerminal( nterm, DirectParent, lst );
+            printf( "[SUCCESS] Finished exploration of Non-Terminal: %s, id: %d\n", getNonTerminal_name(nterm), getNonTerminal_id(nterm) );
 
         }
-        
-        return AndTree;
 
     } else {
-
-        ExecutionGraph* AndTree;
-
-        if( AndExpression->type == TERM ) {
-        
-            AndTree = exploreTerminal( AndExpression->term, DirectParent );
-        
-        } else {
-        
-            AndTree = exploreNonTerminal( lst, AndExpression->nterm, DirectParent );
-        
-        }
-
-        return AndTree;
-
-    }
-
-    printf( "Finished AndTree: %u\n", AndExpression->id );
-
-}
-
-/**
- * @brief Creates an **ExecutionGraph** representing a **AndExpr** object. (Helper method for **exploreAndExpr**)
- * 
- * @param AndExpression A pointer to an **AndExpr** object.
- * @param DirectParent A pointer to the direct parent of the object to be created in the **ExecutionGraph**.
- * @param lst A pointer to the **BindingList** being processed.
- * @return ExecutionGraph* A pointer to a newly created **ExecutionGraph** object.
- */
-ExecutionGraph* exploreAndExpr_Recursive( AndExpr* AndExpression, ExecutionGraph* DirectParent, BindingList* lst ) {
-
-    printf( "Exploring AndTree: %u\n", AndExpression->id );
-
-    if( AndExpression == NULL ) {
 
         ExecutionNode* AndNode = createAndExecutionNode( );
-        ExecutionGraph* AndTree = createExecutionGraph( AndNode, DirectParent );
+        ExecutionGraph* AndGraph = createExecutionGraph( AndNode, DirectParent );
 
-        return AndTree;
+        for( int i=0; i < n; i++ ) {
 
-    } else {
+            if( getAndExpr_type( expr, i ) == TERMINAL_SYMBOL ) {
 
-        ExecutionGraph* AndTree = exploreAndExpr_Recursive( AndExpression->prevAndExpr, DirectParent, lst );
+                Terminal* term = getAndExpr_term( expr, i );
 
-        if( AndExpression->type == TERM ) {
-            
-            ExecutionGraph* TerminalTree = exploreTerminal( AndExpression->term, AndTree );
-            appendNewBranch( AndTree, TerminalTree );
+                printf( "Starting exploration of Terminal: %s, id: %d\n", getTerminal_value(term), getTerminal_id(term) );
+                exploreTerminal( term, AndGraph );
+                printf( "[SUCCESS] Finished exploration of Terminal: %s, id: %d\n", getTerminal_value(term), getTerminal_id(term) );
 
-        } else {
+            } else if ( getAndExpr_type( expr, i ) == NON_TERMINAL_SYMBOL ) {
 
-            ExecutionGraph* NonTerminalTree = exploreNonTerminal(lst, AndExpression->nterm, AndTree);
-            appendNewBranch( AndTree, NonTerminalTree );
+                NonTerminal* nterm = getAndExpr_nterm( expr, i );
+
+                printf( "Starting exploration of Non-Terminal: %s, id: %d\n", getNonTerminal_name(nterm), getNonTerminal_id(nterm) );
+                exploreNonTerminal( nterm, AndGraph, lst );
+                printf( "[SUCCESS] Finished exploration of Non-Terminal: %s, id: %d\n", getNonTerminal_name(nterm), getNonTerminal_id(nterm) );
+
+            }
 
         }
-        
-        return AndTree;
+
+        appendNewBranch( DirectParent, AndGraph );
 
     }
 
-    printf( "Finished AndTree: %u\n", AndExpression->id );
-
 }
+
 
 /**
  * @brief Creates an **ExecutionGraph** representing a **NonTerminal** object.
@@ -415,32 +351,37 @@ ExecutionGraph* exploreAndExpr_Recursive( AndExpr* AndExpression, ExecutionGraph
  * @param DirectParent A pointer to the direct parent of the object to be created in the **ExecutionGraph**.
  * @return ExecutionGraph* A pointer to a newly created **ExecutionGraph** object.
  */
-ExecutionGraph* exploreNonTerminal( BindingList* lst, NonTerminal* nterm, ExecutionGraph* DirectParent ) {
+void exploreNonTerminal( NonTerminal* nterm, ExecutionGraph* DirectParent, BindingList* lst ) {
 
-    Binding* b = searchForBinding( lst, nterm->Name );
+    Binding* b = search_InBindignList( lst, getNonTerminal_name( nterm ) );
 
     if( b == NULL ) {
-        printf( "NonTerminal: %s is not defined as a binding.", nterm->Name );
+
+        printf( "NonTerminal: %s is not defined as a binding.\n", getNonTerminal_name( nterm ) );
         exit( -1 );
+
     }
 
     ExecutionNode* NonTerminalNode = createNonTerminalExecutionNode( nterm );
-    ExecutionGraph* NonTerminalTree = createExecutionGraph( NonTerminalNode, DirectParent );
+    ExecutionGraph* NonTerminalGraph = createExecutionGraph( NonTerminalNode, DirectParent );
 
-    ExecutionGraph* RecursiveNode = verfifyRecursiveness(DirectParent, nterm->Name);
+    ExecutionGraph* RecursiveNode = verfifyRecursiveness(DirectParent, getNonTerminal_name(nterm) );
 
     if( RecursiveNode == NULL ) {
 
-        ExecutionGraph* OrTree = exploreOrExpr( b->OrExpression, NonTerminalTree, lst );
-        appendNewBranch( NonTerminalTree, OrTree );
+        printf( "Starting exploration of OR exprssion, id: %d\n", getOrExpr_id(getBinding_OrExpr(b)) );
+        exploreOrExpr( getBinding_OrExpr( b ), NonTerminalGraph, lst );
+        printf( "Starting exploration of OR exprssion, id: %d\n", getOrExpr_id(getBinding_OrExpr(b)) );
 
     } else {
 
-        appendNewBranch( NonTerminalTree, RecursiveNode );
+        printf( "Found a recursive call at Non-Terminal: %s, from id: %d to id: %d\n", getNonTerminal_name(nterm), getNonTerminal_id(nterm), getNonTerminal_id(getBinding_nterm(b)) );
+        appendNewBranch( NonTerminalGraph, RecursiveNode );
+        printf( "[SUCCESS] Added a recursive call for Non-Terminal: %s, from id: %d to id: %d\n", getNonTerminal_name(nterm), getNonTerminal_id(nterm), getNonTerminal_id(getBinding_nterm(b)) );
 
     }
 
-    return NonTerminalTree;
+    appendNewBranch( DirectParent, NonTerminalGraph );
 
 }
 
@@ -479,12 +420,13 @@ ExecutionGraph* verfifyRecursiveness( ExecutionGraph* tree, char* nterm ) {
  * @param DirectParent A pointer to the direct parent of the object to be created in the **ExecutionGraph**.
  * @return ExecutionGraph* A pointer to a newly created **ExecutionGraph** object.
  */
-ExecutionGraph* exploreTerminal( Terminal* term, ExecutionGraph* DirectParent ) {
+void exploreTerminal( Terminal* term, ExecutionGraph* DirectParent ) {
 
+    
     ExecutionNode* TerminalNode = createTerminalExecutionNode( term );
-    ExecutionGraph* TerminalTree = createExecutionGraph( TerminalNode, DirectParent );
+    ExecutionGraph* TerminalGraph = createExecutionGraph( TerminalNode, DirectParent );
 
-    return TerminalTree;
+    appendNewBranch( DirectParent, TerminalGraph );
 
 }
  

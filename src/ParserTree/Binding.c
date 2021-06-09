@@ -52,6 +52,14 @@ unsigned int getBinding_id( Binding* b ) {
     return b->id;
 }
 
+NonTerminal* getBinding_nterm( Binding* b ) {
+    return b->nterm;
+}
+
+OrExpr* getBinding_OrExpr( Binding* b ) {
+    return b->OrExpression;
+}
+
 /**
  * @brief Destructor for a **Binding** object.
  * 
