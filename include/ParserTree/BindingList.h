@@ -40,11 +40,14 @@
     BindingList* new_BindingList( Binding* b );
     BindingList* append_ToBindingList_Binding( BindingList* lst, Binding* b );
     
-    void freeBindingList( BindingList* bindingList );
     void printBindingList( BindingList* lst );
-    void buildBindingListNode( BindingList* lst, FILE* fp );
+    void build_Graphviz_BindingList( BindingList* lst, FILE* fp );
+
     Binding* verifyUniquenessOfBindings( BindingList* lst );
     Binding* searchForBinding( BindingList* lst, char* nterm );
+
+    void freeBindingList( BindingList* bindingList );
+    
 
     /** @} */
 

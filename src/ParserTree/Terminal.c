@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Terminal.h"
+#include "ParserTree/Terminal.h"
 #include "Common.h"
 
 

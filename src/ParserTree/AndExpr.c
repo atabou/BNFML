@@ -12,9 +12,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "AndExpr.h"
-#include "Terminal.h"
-#include "NonTerminal.h"
+#include "ParserTree/AndExpr.h"
+#include "ParserTree/Terminal.h"
+#include "ParserTree/NonTerminal.h"
 #include "Common.h"
 
 /**
@@ -142,7 +142,7 @@ AndExpr* append_ToAndExpr_NonTerminal( AndExpr* expr, NonTerminal* nterm ) {
 
     Symbol* s = (Symbol*) malloc( sizeof(Symbol) );
     s->type = NON_TERMINAL_SYMBOL;
-    s->term = nterm;
+    s->nterm = nterm;
 
     Symbol** sym_array = (Symbol**) malloc( sizeof(Symbol*) * (expr->n + 1) );
 

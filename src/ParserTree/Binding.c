@@ -11,9 +11,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Binding.h"
-#include "NonTerminal.h"
-#include "OrExpr.h"
+#include "ParserTree/Binding.h"
+#include "ParserTree/NonTerminal.h"
+#include "ParserTree/OrExpr.h"
 #include "Common.h"
 
 /**
@@ -93,9 +93,9 @@ void build_Graphviz_Binding( Binding* b, FILE* fp ) {
     fprintf( fp, "%u [label=\"%s\"];\n", b->id, "Binding" );
 
     fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", b->id, getNonTerminal_id( b->nterm ) );
-    buildNonTerminalNode( b->nterm, fp );
+    build_Graphviz_NonTerminal( b->nterm, fp );
 
     fprintf( fp, "%u -> %u [label=\"Or-Expression\"];\n", b->id, getOrExpr_id( b->OrExpression ) );
-    buildOrExprNode( b->OrExpression, fp );
+    build_Graphviz_OrExpr( b->OrExpression, fp );
 
 }

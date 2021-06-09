@@ -11,8 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "OrExpr.h"
-#include "AndExpr.h"
+#include "ParserTree/OrExpr.h"
+#include "ParserTree/AndExpr.h"
 #include "Common.h"
 
 /**

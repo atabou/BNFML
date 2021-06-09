@@ -30,7 +30,7 @@
 
     void freeBinding( Binding* binding );
     void printBinding( Binding* b );
-    void buildBindingNode( Binding* b, FILE* fp );
+    void build_Graphviz_Binding( Binding* b, FILE* fp );
 
     /** @} */
 

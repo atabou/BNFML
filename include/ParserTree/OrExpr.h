@@ -30,7 +30,7 @@
 
     void freeOrExpr( OrExpr* OrExpression );
     void printOrExpr( OrExpr* OrExpression );
-    void buildOrExprNode( OrExpr* OrExpression, FILE* fp );
+    void build_Graphviz_OrExpr( OrExpr* OrExpression, FILE* fp );
 
     /** @} */
 

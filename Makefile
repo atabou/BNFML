@@ -1,13 +1,16 @@
 
 
 INC=./include
+
 PTREE=./src/ParserTree
+PTREE_H=${INC}/ParserTree
+
 ETREE=./src/ExecutionGraph
 GEN=./src/Generated
 OBJ=./obj
 EXE=./bin
 
-COMPILE=${OBJ}/AndExpr.o ${OBJ}/Binding.o ${OBJ}/BindingList.o ${OBJ}/NonTerminal.o ${OBJ}/OrExpr.o ${OBJ}/Terminal.o ${OBJ}/bnfml.tab.o ${OBJ}/lex.yy.o ${OBJ}/ExecutionNode.o ${OBJ}/ExecutionGraph.o
+COMPILE=${OBJ}/AndExpr.o ${OBJ}/Binding.o ${OBJ}/BindingList.o ${OBJ}/NonTerminal.o ${OBJ}/OrExpr.o ${OBJ}/Terminal.o ${OBJ}/bnfml.tab.o ${OBJ}/lex.yy.o
 
 
 
@@ -15,33 +18,25 @@ COMPILE=${OBJ}/AndExpr.o ${OBJ}/Binding.o ${OBJ}/BindingList.o ${OBJ}/NonTermina
 ${EXE}/bnfml: ${COMPILE}
 	gcc -Iinclude -o bin/bnfml ${COMPILE}
 
-${OBJ}/AndExpr.o: ${PTREE}/AndExpr.c ${INC}/ParserTree.h
+
+
+${OBJ}/NonTerminal.o: ${PTREE}/NonTerminal.c ${PTREE_H}/NonTerminal.h ${INC}/Common.h
 	gcc -Iinclude -c $< -o $@
 
-${OBJ}/Binding.o: ${PTREE}/Binding.c ${INC}/ParserTree.h
+${OBJ}/Terminal.o: ${PTREE}/Terminal.c ${PTREE_H}/Terminal.h ${INC}/Common.h
 	gcc -Iinclude -c $< -o $@
 
-${OBJ}/BindingList.o: ${PTREE}/BindingList.c ${INC}/ParserTree.h
+${OBJ}/AndExpr.o: ${PTREE}/AndExpr.c ${PTREE_H}/AndExpr.h ${PTREE_H}/NonTerminal.h ${PTREE_H}/Terminal.h ${INC}/Common.h
 	gcc -Iinclude -c $< -o $@
 
-${OBJ}/NonTerminal.o: ${PTREE}/NonTerminal.c ${INC}/ParserTree.h
+${OBJ}/OrExpr.o: ${PTREE}/OrExpr.c ${PTREE_H}/OrExpr.h ${PTREE_H}/AndExpr.h ${INC}/Common.h
 	gcc -Iinclude -c $< -o $@
 
-${OBJ}/OrExpr.o: ${PTREE}/OrExpr.c ${INC}/ParserTree.h
+${OBJ}/Binding.o: ${PTREE}/Binding.c ${PTREE_H}/Binding.h ${PTREE_H}/NonTerminal.h ${PTREE_H}/OrExpr.h ${INC}/Common.h
 	gcc -Iinclude -c $< -o $@
 
-${OBJ}/Terminal.o: ${PTREE}/Terminal.c ${INC}/ParserTree.h
+${OBJ}/BindingList.o: ${PTREE}/BindingList.c ${PTREE_H}/BindingList.h ${PTREE_H}/Binding.h ${INC}/Common.h
 	gcc -Iinclude -c $< -o $@
-
-
-
-
-${OBJ}/ExecutionNode.o: ${ETREE}/ExecutionNode.c ${INC}/ParserTree.h ${INC}/ExecutionGraph.h
-	gcc -Iinclude -c $< -o $@
-
-${OBJ}/ExecutionGraph.o: ${ETREE}/ExecutionGraph.c ${INC}/ParserTree.h ${INC}/ExecutionGraph.h
-	gcc -Iinclude -c $< -o $@
-
 
 
 
@@ -56,6 +51,9 @@ ${OBJ}/lex.yy.o: ${GEN}/lex.yy.c ${INC}/bnfml.tab.h
 
 ${GEN}/lex.yy.c: bnfml.flex
 	flex --outfile="${GEN}/lex.yy.c" bnfml.flex
+
+
+
 
 clean:
 	rm include/bnfml.tab.h ${GEN}/bnfml.tab.c ${GEN}/lex.yy.c obj/* bin/* log/*

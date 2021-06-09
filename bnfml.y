@@ -3,8 +3,9 @@
 
 #include <stdio.h>
 
+#include "Common.h"
 #include "ParserTree.h"
-#include "ExecutionGraph.h"
+// #include "ExecutionGraph.h"
 
 extern FILE *yyin;
 FILE* outFile;
@@ -17,8 +18,8 @@ void yyerror(const char* s);
 void doThis( BindingList* lst );
 
 /* Extern Variables */
-unsigned int idGenerator;
-unsigned int executionTreeIDGenerator;
+unsigned int ParserID_Generator;
+// unsigned int executionTreeIDGenerator;
 
 %}
 
@@ -72,8 +73,8 @@ bnf
 
 
 binding_list
-    : binding_list NL binding                   { $$ = appendBinding($1, $3); }
-    | binding                                   { $$ = createBindingListFromBinding($1); }
+    : binding_list NL binding                   { $$ = append_ToBindingList_Binding($1, $3); }
+    | binding                                   { $$ = new_BindingList( $1 ); }
     ;
 
 binding
@@ -112,17 +113,17 @@ void doThis( BindingList* lst ) {
     FILE* fp = fopen( "log/ParseTree.dot", "w" );
     
     fprintf( fp, "digraph tree {\n" );
-    buildBindingListNode( lst, fp );
+    build_Graphviz_BindingList( lst, fp );
     fprintf( fp, "}\n" );
 
     fclose(fp);
 
-    ExecutionGraph* G = buildExecutionGraph( lst );
+    /* ExecutionGraph* G = buildExecutionGraph( lst ); */
 
     freeBindingList( lst );
     free( lst ); 
 
-    fp = fopen( "log/ExecutionGraph.dot", "w" );
+    /* fp = fopen( "log/ExecutionGraph.dot", "w" );
 
     fprintf( fp, "digraph tree {\n" );
     buildGraphvizExecutionGraphRepresentation( G, fp );
@@ -131,15 +132,15 @@ void doThis( BindingList* lst ) {
     fclose(fp);
 
     freeExecutionGraph( G );
-    free( G );
+    free( G ); */
 
 }
 
 int main(int argc, char **argv){
 
     // Initialise Global Variables;
-    idGenerator = 0;
-    executionTreeIDGenerator = 0;
+    ParserID_Generator = 0;
+    /* executionTreeIDGenerator = 0; */
 
     if( argc < 2 ) {
         printf( "Please provide a file to process." );
@@ -161,7 +162,7 @@ int main(int argc, char **argv){
 
 void yyerror(const char* s) {
 
-    printf( "ID Generator: %d\n", idGenerator );
+    printf( "ID Generator: %d\n", ParserID_Generator );
     fprintf(stderr, "Parse error: %s\n", s);
     exit(1);
 
