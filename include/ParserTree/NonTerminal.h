@@ -30,7 +30,7 @@
 
     NonTerminal* new_NonTerminal( char* name );
 
-    int getNonTerminal_id( NonTerminal* nterm );
+    unsigned int getNonTerminal_id( NonTerminal* nterm );
     char* getNonTerminal_name( NonTerminal* term );
 
     void freeNonTerminal( NonTerminal* nterm );

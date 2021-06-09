@@ -38,7 +38,7 @@ NonTerminal* new_NonTerminal( char* name ) {
 
 }
 
-int getNonTerminal_id( NonTerminal* nterm ) {
+unsigned int getNonTerminal_id( NonTerminal* nterm ) {
     return nterm->id;
 }
 

@@ -48,7 +48,7 @@ Binding* new_Binding( NonTerminal* nterm, OrExpr* OrExpression ) {
 
 }
 
-int getBinding_id( Binding* b ) {
+unsigned int getBinding_id( Binding* b ) {
     return b->id;
 }
 

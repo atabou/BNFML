@@ -161,7 +161,7 @@ AndExpr* append_ToAndExpr_NonTerminal( AndExpr* expr, NonTerminal* nterm ) {
 
 }
 
-int getAndExpr_id( AndExpr* expr ) {
+unsigned int getAndExpr_id( AndExpr* expr ) {
     return expr->id;
 }
 

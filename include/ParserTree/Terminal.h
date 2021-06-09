@@ -24,7 +24,7 @@
 
     Terminal* new_Terminal( char* value );
 
-    int getTerminal_id( Terminal* term );
+    unsigned int getTerminal_id( Terminal* term );
     char* getTerminal_value( Terminal* term );
     
     void freeTerminal(Terminal* term);

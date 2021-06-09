@@ -34,7 +34,8 @@
     AndExpr* append_ToAndExpr_Terminal( AndExpr* expr, Terminal* term );
     AndExpr* append_ToAndExpr_NonTerminal( AndExpr* expr, NonTerminal* nterm );
     
-    int getAndExpr_id( AndExpr* expr );
+    unsigned int getAndExpr_id( AndExpr* expr );
+    
     void printAndExpr( AndExpr* AndExpression );
     void build_Graphviz_AndExpr( AndExpr* expr, FILE* fp );
 

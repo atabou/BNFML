@@ -45,7 +45,7 @@ Terminal* new_Terminal( char* value ) {
 
 }
 
-int getTerminal_id( Terminal* term ) {
+unsigned int getTerminal_id( Terminal* term ) {
 
     return term->id;
 
