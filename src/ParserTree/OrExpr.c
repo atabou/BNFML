@@ -11,21 +11,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ParserTree.h"
+#include "ParserTree/OrExpr.h"
+#include "ParserTree/AndExpr.h"
+#include "Common.h"
+
+/**
+ * @struct **OrExpr**
+ * @brief struct to define a parsed **OrExpr** value in BNFML
+ * 
+ */
+struct OrExpr { // TODO OrExpression does not need to be a linked list
+
+    unsigned int id; /**< Global ID of the object. see: idGenerator*/
+    AndExpr** branches; /**< An array of pointers to **AndExpr** objects.*/
+    int n; /** An integer representing the number of elements in AndExpression. */
+
+}; 
 
 /**
  * @brief Constructor to create an **AndExpr** object.
  * 
- * @param AndExpression A pointer to a **AndExpr** object.
+ * @param expr A pointer to a **AndExpr** object.
  * @return OrExpr* Pointer to a newly created **OrExpr** object.
  */
-OrExpr* createOrExpr( AndExpr* AndExpression ) {
+OrExpr* new_OrExpr( AndExpr* expr ) {
 
     OrExpr* o = (OrExpr*) malloc(sizeof(OrExpr));
 
-    o->id = idGenerator++;
-    o->prevOrExpr = NULL;
-    o->AndExpression = AndExpression;
+    o->id = ParserID_Generator++;
+
+    o->branches = ( AndExpr** ) malloc( sizeof( AndExpr* ) );
+    o->branches[0] = expr;
+    o->n = 1;
 
     return o;
 
@@ -34,88 +51,98 @@ OrExpr* createOrExpr( AndExpr* AndExpression ) {
 /**
  * @brief Constructor to append a new **AndExpr** to an existing **OrExpr** object.
  * 
- * @param lst A pointer to an existing **OrExpr** object.
+ * @param expr A pointer to an existing **OrExpr** object.
  * @param AndExpression A pointer to a **AndExpr** object.
  * @return OrExpr* Pointer to a newly created **OrExpression** object.
  */
-OrExpr* appendAndExpr( OrExpr* lst, AndExpr* AndExpression ) {
+OrExpr* append_ToOrExpr_AndExpr( OrExpr* expr, AndExpr* AndExpression ) {
 
-    OrExpr* o = (OrExpr*) malloc(sizeof(OrExpr));
+    AndExpr** and_array = (AndExpr**) malloc( sizeof(AndExpr*) * (expr->n + 1) );
 
-    o->id = idGenerator++;
-    o->prevOrExpr = lst;
-    o->AndExpression = AndExpression;
+    for( int i=0; i<expr->n; i++ ) {
+        and_array[i] = expr->branches[i];
+    }
 
-    return o;
+    and_array[expr->n] = AndExpression;
+
+    free( expr->branches );
+    
+    expr->branches = and_array;
+    expr->n = expr->n + 1;
+
+    return expr;
 
 }
+
+
+unsigned int getOrExpr_id( OrExpr* expr ) {
+    return expr->id;
+}
+
+AndExpr** getOrExpr_branches( OrExpr* expr ) {
+    return expr->branches;
+}
+
+int getOrExpr_num_branches( OrExpr* expr ) {
+    return expr->n;
+}
+
 
 /**
  * @brief Destructor for an **OrExpr** object.
  * 
- * @param OrExpression A pointer to the **OrExpr** object you want to destruct.
+ * @param expr A pointer to the **OrExpr** object you want to destruct.
  */
-void freeOrExpr(OrExpr* OrExpression) {
+void freeOrExpr(OrExpr* expr) {
 
-    freeAndExpr( OrExpression->AndExpression );
-    free( OrExpression->AndExpression );
-    OrExpression->AndExpression = NULL;
+    for( int i=0; i<expr->n; i++ ) {
 
-    if( OrExpression->prevOrExpr != NULL ) {
-        freeOrExpr(OrExpression->prevOrExpr);
+        freeAndExpr( expr->branches[i] );
+        free( expr->branches[i] );
+        expr->branches[i] = NULL;
+
     }
 
-    free(OrExpression->prevOrExpr);
-    OrExpression->prevOrExpr = NULL;
+    free( expr->branches );
+    expr->branches = NULL;
+    expr->n = 0;
 
 }
 
 /**
  * @brief Prints a string representation of an **OrExpr** object.
  * 
- * @param OrExpression A pointer to the **OrExpr** object you want to print.
+ * @param expr A pointer to the **OrExpr** object you want to print.
  */
-void printOrExpr( OrExpr* OrExpression ) {
+void printOrExpr( OrExpr* expr ) {
 
-    printAndExpr( OrExpression->AndExpression );
+    for( int i = 0; i < expr->n; i++ ) {
 
-    if( OrExpression->prevOrExpr != NULL ) {
-
-        printf(" | ");
-        printOrExpr(OrExpression->prevOrExpr);
+        printAndExpr( expr->branches[i] );
+        
+        if( i < expr->n - 1 ) {
+            printf( " | " );
+        }
 
     }
 
 }
-
-/**
- * @brief Internal function to build a graphiz representation of the dependencies of an **OrExpr**. (Used by **buildOrExprNode**)
- * 
- * @param OrExpression A pointer to an **OrExpr** object.
- * @param fp A valid file pointer.
- * @param id The id of the "top level" **OrExpr**. 
- */
-void buildOrExprArrows( OrExpr* OrExpression, FILE* fp, unsigned int id ) {
-
-    fprintf( fp, "%u -> %u;\n", id, OrExpression->AndExpression->id );
-    buildAndExprNode( OrExpression->AndExpression, fp );
-
-    if( OrExpression->prevOrExpr != NULL ) {
-        buildOrExprArrows( OrExpression->prevOrExpr, fp, id );
-    }
-
-}
-
 
 /**
  * @brief Builds a graphviz representation of an **OrExpr** object and prints it to a file.
  * 
- * @param OrExpression A pointer to an **OrExpr** object.
+ * @param expr A pointer to an **OrExpr** object.
  * @param fp A valid file pointer.
  */
-void buildOrExprNode( OrExpr* OrExpression, FILE* fp ) {
+void build_Graphviz_OrExpr( OrExpr* expr, FILE* fp ) {
 
-    fprintf( fp, "%u [label=\"%s\"];\n", OrExpression->id, "OR" );
-    buildOrExprArrows( OrExpression, fp, OrExpression->id );
+    fprintf( fp, "%u [label=\"%s\"];\n", expr->id, "OR" );
+    
+    for( int i=0; i < expr->n; i++ ) {
+
+        fprintf( fp, "%u -> %u;\n", expr->id, getAndExpr_id( expr->branches[i] ) );
+        build_Graphviz_AndExpr( expr->branches[i], fp );
+
+    }
 
 }

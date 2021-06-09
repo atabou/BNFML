@@ -1,0 +1,7 @@
+<bnf> ::= <Binding List>
+<Binding List> ::= <Binding List> '\\n' <Binding> | <Binding>
+<Binding> ::= <NonTerminal> '::=' <OR Expression>
+<OR Expression> ::= <OR Expression> '|' <AND Expression> | <AND Expression>
+<AND Expression> ::= <AND Expression> <NonTerminal> | <AND Expression> <Terminal> | <NonTerminal> | <Terminal>
+<NonTerminal> ::= '<.+>'
+<Terminal> ::= '.+'

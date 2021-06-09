@@ -11,8 +11,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ParserTree.h"
+#include "ParserTree/Binding.h"
+#include "ParserTree/NonTerminal.h"
+#include "ParserTree/OrExpr.h"
+#include "Common.h"
 
+/**
+ * @struct **Binding**
+ * @brief struct to define a parsed **Binding** value in BNFML
+ * 
+ */
+struct Binding {
+
+    unsigned int id; /**< Global ID of the object. see: idGenerator*/
+    NonTerminal* nterm; /**< A pointer to a **NonTerminal** object.*/
+    OrExpr* OrExpression; /**< A pointer to a **OrExpr** object.*/
+
+}; 
 
 /**
  * @brief Constructor to create an **Binding** object.
@@ -21,16 +36,28 @@
  * @param OrExpression A pointer to an **OrExpr** object.
  * @return Binding* Pointer to a newly created **Binding** object.
  */
-Binding* createBinding( NonTerminal* nterm, OrExpr* OrExpression ) {
+Binding* new_Binding( NonTerminal* nterm, OrExpr* OrExpression ) {
 
     Binding* b = (Binding*) malloc(sizeof(Binding));
 
-    b->id = idGenerator++;
+    b->id = ParserID_Generator++;
     b->nterm = nterm;
     b->OrExpression = OrExpression;
 
     return b; 
 
+}
+
+unsigned int getBinding_id( Binding* b ) {
+    return b->id;
+}
+
+NonTerminal* getBinding_nterm( Binding* b ) {
+    return b->nterm;
+}
+
+OrExpr* getBinding_OrExpr( Binding* b ) {
+    return b->OrExpression;
 }
 
 /**
@@ -69,14 +96,14 @@ void printBinding( Binding* b ) {
  * @param b A pointer to an **Binding** object.
  * @param fp A valid file pointer.
  */
-void buildBindingNode( Binding* b, FILE* fp ) {
+void build_Graphviz_Binding( Binding* b, FILE* fp ) {
 
     fprintf( fp, "%u [label=\"%s\"];\n", b->id, "Binding" );
 
-    fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", b->id, b->nterm->id );
-    buildNonTerminalNode( b->nterm, fp );
+    fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", b->id, getNonTerminal_id( b->nterm ) );
+    build_Graphviz_NonTerminal( b->nterm, fp );
 
-    fprintf( fp, "%u -> %u [label=\"Or-Expression\"];\n", b->id, b->OrExpression->id);
-    buildOrExprNode( b->OrExpression, fp );
+    fprintf( fp, "%u -> %u [label=\"Or-Expression\"];\n", b->id, getOrExpr_id( b->OrExpression ) );
+    build_Graphviz_OrExpr( b->OrExpression, fp );
 
 }

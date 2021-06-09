@@ -12,7 +12,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ParserTree.h"
+#include "ParserTree/BindingList.h"
+#include "ParserTree/Binding.h"
+#include "Common.h"
 
 /**
  * @brief Constructor to create a **Binding** object.
@@ -20,11 +22,11 @@
  * @param b A pointer to a **Binding** object.
  * @return BindingList* Pointer to a newly created **BindingList** object.
  */
-BindingList* createBindingListFromBinding( Binding* b ) {
+BindingList* new_BindingList( Binding* b ) {
 
     BindingList* r = (BindingList*) malloc( sizeof(BindingList) );
     
-    r->id = idGenerator++;
+    r->id = ParserID_Generator++;
     r->prevBindings = NULL;
     r->binding = b;
 
@@ -39,13 +41,16 @@ BindingList* createBindingListFromBinding( Binding* b ) {
  * @param b A pointer to a **Binding** object.
  * @return BindingList* Pointer to a newly created **BindingList** object.
  */
-BindingList* appendBinding( BindingList* lst, Binding* b ) {
+BindingList* append_ToBindingList_Binding( BindingList* lst, Binding* b ) {
 
     BindingList* r = (BindingList*) malloc( sizeof(BindingList) );
-    r->id = idGenerator++;
+
+    r->id = ParserID_Generator++;
     r->prevBindings = lst;
     r->binding = b;
     
+    return r;
+
 }
 
 /**
@@ -118,8 +123,8 @@ void printBindingList( BindingList* lst ) {
  */
 void buildBindingListArrows( BindingList* lst, FILE* fp, unsigned int id ) {
 
-    fprintf( fp, "%u -> %u;\n", id, lst->binding->id );
-    buildBindingNode( lst->binding, fp );
+    fprintf( fp, "%u -> %u;\n", id, getBinding_id(lst->binding) );
+    build_Graphviz_Binding( lst->binding, fp );
 
     if( lst->prevBindings != NULL ) {
         buildBindingListArrows( lst->prevBindings, fp, id );
@@ -133,7 +138,7 @@ void buildBindingListArrows( BindingList* lst, FILE* fp, unsigned int id ) {
  * @param lst A pointer to an **BindingList** object.
  * @param fp A valid file pointer.
  */
-void buildBindingListNode( BindingList* lst, FILE* fp ) {
+void build_Graphviz_BindingList( BindingList* lst, FILE* fp ) {
 
     fprintf( fp, "%u [label=\"%s\"];\n", lst->id, "Binding List" );
     buildBindingListArrows( lst, fp, lst->id );
@@ -157,7 +162,7 @@ Binding* verifyUniquenessOfBindings( BindingList* lst ) {
 
         while( fast != NULL ) {
 
-            if( strcmp( fast->binding->nterm->Name, slow->binding->nterm->Name ) == 0 ) {
+            if( strcmp( getNonTerminal_name(getBinding_nterm( fast->binding )) , getNonTerminal_name(getBinding_nterm( slow->binding )) ) == 0 ) {
                 b = slow->binding;
                 break;
             }
@@ -181,14 +186,14 @@ Binding* verifyUniquenessOfBindings( BindingList* lst ) {
  * 
  * @return Binding* A pointer to the binding containing the **NonTerminal** we searched for.
  */
-Binding* searchForBinding( BindingList* lst, char* nterm ) {
+Binding* search_InBindignList( BindingList* lst, char* name ) {
 
     Binding* b = NULL;
 
     BindingList* current = lst;
     while( current != NULL ) {
 
-        if( strcmp(current->binding->nterm->Name, nterm) == 0  ) {
+        if( strcmp( getNonTerminal_name(getBinding_nterm( current->binding )), name ) == 0  ) {
             b = current->binding;
             break;
         }

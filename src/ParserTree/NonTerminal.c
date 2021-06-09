@@ -11,23 +11,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ParserTree.h"
+#include "ParserTree/NonTerminal.h"
+#include "Common.h"
+
+struct NonTerminal {
+
+    unsigned int id; /**< Global ID of the object. see: idGenerator*/
+    char* name; /**< A string representing the name of a non-terminal.*/
+
+}; 
 
 /**
  * @brief Constructor to create a **Non-Terminal** object.
  * 
- * @param Name String that represents the name of a **Non-Terminal** object.
+ * @param name String that represents the name of a **Non-Terminal** object.
  * @return NonTerminal* Pointer to a newly created **Non-Terminal** object.
  */
-NonTerminal* createNonTerminal( char* Name ) {
+NonTerminal* new_NonTerminal( char* name ) {
 
     NonTerminal* nt = (NonTerminal*) malloc(sizeof(NonTerminal));
 
-    nt->id = idGenerator++;
-    nt->Name = Name;
+    nt->id = ParserID_Generator++;
+    nt->name = name;
 
     return nt;
 
+}
+
+unsigned int getNonTerminal_id( NonTerminal* nterm ) {
+    return nterm->id;
+}
+
+char* getNonTerminal_name( NonTerminal* nterm ) {
+    return nterm->name;
 }
 
 /**
@@ -37,8 +53,8 @@ NonTerminal* createNonTerminal( char* Name ) {
  */
 void freeNonTerminal( NonTerminal* nterm ) {
 
-    free(nterm->Name);
-    nterm->Name = NULL;
+    free(nterm->name);
+    nterm->name = NULL;
     
 }
 
@@ -49,7 +65,7 @@ void freeNonTerminal( NonTerminal* nterm ) {
  */
 void printNonTerminal( NonTerminal* nterm ) {
 
-    printf( "%s", nterm->Name );
+    printf( "%s", nterm->name );
 
 }
 
@@ -59,8 +75,8 @@ void printNonTerminal( NonTerminal* nterm ) {
  * @param term A pointer to a **Terminal** object.
  * @param fp A valid file pointer.
  */
-void buildNonTerminalNode( NonTerminal* nterm, FILE* fp ) {
+void build_Graphviz_NonTerminal( NonTerminal* nterm, FILE* fp ) {
 
-    fprintf( fp, "%u [label=\"%s\"];\n", nterm->id, nterm->Name );
+    fprintf( fp, "%u [label=\"%s\"];\n", nterm->id, nterm->name );
 
 }

@@ -83,6 +83,4 @@
     
     /** @} */
 
-    extern unsigned int executionTreeIDGenerator;
-
 #endif

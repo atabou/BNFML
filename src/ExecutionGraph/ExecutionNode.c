@@ -15,6 +15,7 @@
 
 #include "ExecutionGraph.h"
 #include "ParserTree.h"
+#include "Common.h"
 
 /**
  * @brief Constructor to create an **ExecutionNode** object for a Terminal node.
@@ -26,9 +27,14 @@ ExecutionNode* createTerminalExecutionNode( Terminal* term ) {
 
     ExecutionNode* node = (ExecutionNode*) malloc( sizeof(ExecutionNode) );
 
-    node->id = executionTreeIDGenerator++;
+    node->id = ExecutionID_Generator++;
     node->NodeType = TERMINAL_NODE;
-    node->term = strdup(term->regex);
+
+    if( getTerminal_value(term) == NULL  ) {
+        node->term = NULL;
+    } else {
+        node->term = strdup( getTerminal_value( term ) );
+    }
 
     return node;
 
@@ -44,9 +50,9 @@ ExecutionNode* createNonTerminalExecutionNode( NonTerminal* nterm ) {
 
     ExecutionNode* node = (ExecutionNode*) malloc( sizeof(ExecutionNode) );
 
-    node->id = executionTreeIDGenerator++;
+    node->id = ExecutionID_Generator++;
     node->NodeType = NON_TERMINAL_NODE;
-    node->nterm = strdup(nterm->Name);
+    node->nterm = strdup( getNonTerminal_name( nterm ) );
 
     return node;
 
@@ -61,7 +67,7 @@ ExecutionNode* createAndExecutionNode( ) {
 
     ExecutionNode* node = (ExecutionNode*) malloc( sizeof(ExecutionNode) );
 
-    node->id = executionTreeIDGenerator++;
+    node->id = ExecutionID_Generator++;
     node->NodeType = AND_NODE;
     
     return node;
@@ -77,7 +83,7 @@ ExecutionNode* createOrExecutionNode( ) {
 
     ExecutionNode* node = (ExecutionNode*) malloc( sizeof(ExecutionNode) );
 
-    node->id = executionTreeIDGenerator++;
+    node->id = ExecutionID_Generator++;
     node->NodeType = OR_NODE;
     
     return node;
