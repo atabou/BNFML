@@ -5,7 +5,7 @@
  * @author Andre Tabourian
  * @version 0.0.1
  * @date 6 Jun 2021
- * @brief Header file containing struct and function definition to create the objects that BNFML will be parsed into.
+ * @brief Header file containing struct and function definition to create a **NonTerminal** object, as well as the functions related to it.
  * @bug No known bugs.
  */
 
@@ -14,9 +14,6 @@
     #define NON_TERMINAL_H
 
     #include <stdio.h>
-
-    typedef struct NonTerminal NonTerminal;
-
     
     /**
      * \addtogroup NonTerminal
@@ -28,19 +25,17 @@
      * @brief struct to define a parsed **NonTerminal** object in BNFML
      * 
      */
-    struct NonTerminal {
 
-        unsigned int id; /**< Global ID of the object. see: idGenerator*/
-        char* Name; /**< A string representing the name of a non-terminal.*/
+    typedef struct NonTerminal NonTerminal;
 
-    }; 
+    NonTerminal* new_NonTerminal( char* name );
 
-    
-    NonTerminal* createNonTerminal( char* Name );
+    int getNonTerminal_id( NonTerminal* nterm );
+    char* getNonTerminal_name( NonTerminal* term );
 
     void freeNonTerminal( NonTerminal* nterm );
     void printNonTerminal( NonTerminal* nterm );
-    void buildNonTerminalNode( NonTerminal* nterm, FILE* fp );
+    void build_Graphviz_NonTerminal( NonTerminal* nterm, FILE* fp );
 
     /** @} */
 

@@ -16,28 +16,18 @@
     #include <stdio.h>
     #include "AndExpr.h"
 
-    typedef struct OrExpr OrExpr;
-
     /**
      * \addtogroup OrExpression
      * @{
      */
 
-    /**
-     * @struct **OrExpr**
-     * @brief struct to define a parsed **OrExpr** value in BNFML
-     * 
-     */
-    struct OrExpr { // TODO OrExpression does not need to be a linked list
-
-        unsigned int id; /**< Global ID of the object. see: idGenerator*/
-        AndExpr* AndExpression; /**< A pointer to a **AndExpr** object.*/
-
-    }; 
+    typedef struct OrExpr OrExpr;
     
-    OrExpr* createOrExpr( AndExpr* AndExpression );
-    OrExpr* appendAndExpr( OrExpr* lst, AndExpr* AndExpression );
+    OrExpr* new_OrExpr( AndExpr* expr );
+    OrExpr* append_ToOrExpr_AndExpr( OrExpr* expr, AndExpr* AndExpression );
     
+    unsigned int getOrExpr_id( OrExpr* expr );
+
     void freeOrExpr( OrExpr* OrExpression );
     void printOrExpr( OrExpr* OrExpression );
     void buildOrExprNode( OrExpr* OrExpression, FILE* fp );

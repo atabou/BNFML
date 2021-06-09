@@ -5,14 +5,52 @@
  * @author Andre Tabourian
  * @version 0.0.1
  * @date 6 Jun 2021
- * @brief C file containing implementations of the AndExpr struct related functions
+ * @brief C file containing implementations of the **AndExpr** struct and its related functions.
  * @bug No known bugs.
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ParserTree.h"
+#include "AndExpr.h"
+#include "Terminal.h"
+#include "NonTerminal.h"
+#include "Common.h"
+
+/**
+ * @enum SymbolType
+ * @brief Enum to represent the types a symbol can be.
+ * 
+ */
+enum SymbolType {
+
+    TERMINAL_SYMBOL, /**< Enum value to reprsent a **Terminal** value. */
+    NON_TERMINAL_SYMBOL /**< Enum value to represent a **NonTerminal** value. */
+
+};
+
+typedef struct Symbol {
+
+    enum SymbolType type; /**< Enum **SymbolType** used to determine the type of symbol this object contains */
+    union {
+        NonTerminal* nterm; /**< A pointer to a **NonTerminal** object.*/
+        Terminal* term; /**< A pointer to a **Terminal** object.*/
+    };
+
+} Symbol;
+
+/**
+ * @struct **AndExpr**
+ * @brief struct to define a parsed **AndExpr** value in BNFML
+ * 
+ */
+struct AndExpr { // TODO AndExpression does not need to be a linked list.
+
+    unsigned int id; /**< Global ID of the object. see: idGenerator*/
+    Symbol** branches; /**< Array of pointers to **Symbol** objects. */
+    int n; /**< Integer representing the number of elements in the array */
+
+};
 
 /**
  * @brief Constructor to create an **AndExpr** object.
@@ -20,14 +58,20 @@
  * @param term A pointer to a **Terminal** object.
  * @return AndExpr* Pointer to a newly created **AndExpr** object.
  */
-AndExpr* createTerminalAndExpr( Terminal* term ) {
+AndExpr* new_AndExpr_Terminal( Terminal* term ) {
 
     AndExpr* a = (AndExpr*) malloc(sizeof(AndExpr));
 
-    a->id = idGenerator++;
-    a->prevAndExpr = NULL;
-    a->type = TERM;
-    a->term = term;
+    a->id = ParserID_Generator++;
+
+    a->branches = (Symbol**) malloc( sizeof( Symbol* ) );
+    a->n = 1;
+
+    Symbol* s = (Symbol*) malloc( sizeof(Symbol) );
+    s->type = TERMINAL_SYMBOL;
+    s->term = term;
+
+    a->branches[0] = s;
 
     return a;
 
@@ -39,14 +83,20 @@ AndExpr* createTerminalAndExpr( Terminal* term ) {
  * @param nterm A pointer to a **NonTerminal** object.
  * @return AndExpr* Pointer to a newly created **AndExpr** object.
  */
-AndExpr* createNonTerminalAndExpr( NonTerminal* nterm ) {
+AndExpr* new_AndExpr_NonTerminal( NonTerminal* nterm ) {
 
     AndExpr* a = (AndExpr*) malloc(sizeof(AndExpr));
 
-    a->id = idGenerator++;
-    a->prevAndExpr = NULL;
-    a->type = NONTERM;
-    a->nterm = nterm;
+    a->id = ParserID_Generator++;
+
+    a->branches = (Symbol**) malloc( sizeof( Symbol* ) );
+    a->n = 1;
+
+    Symbol* s = (Symbol*) malloc( sizeof(Symbol) );
+    s->type = NON_TERMINAL_SYMBOL;
+    s->nterm = nterm;
+
+    a->branches[0] = s;
 
     return a;
 
@@ -56,114 +106,116 @@ AndExpr* createNonTerminalAndExpr( NonTerminal* nterm ) {
 /**
  * @brief Constructor to append a new **Terminal** to an existing **AndExpr** object.
  * 
- * @param lst A pointer to an existing **AndExpr** object.
+ * @param expr A pointer to an existing **AndExpr** object.
  * @param term A pointer to a **Terminal** object.
- * @return AndExpr* Pointer to a newly created **AndExpr** object.
  */
-AndExpr* appendTerminal( AndExpr* lst, Terminal* term ) {
+AndExpr* append_ToAndExpr_Terminal( AndExpr* expr, Terminal* term ) {
 
-    AndExpr* a = (AndExpr*) malloc(sizeof(AndExpr));
+    Symbol* s = (Symbol*) malloc( sizeof(Symbol) );
+    s->type = TERMINAL_SYMBOL;
+    s->term = term;
 
-    a->id = idGenerator++;
-    a->prevAndExpr = lst;
-    a->type = TERM;
-    a->term = term;
+    Symbol** sym_array = (Symbol**) malloc( sizeof(Symbol*) * (expr->n + 1) );
+
+    for( int i=0; i<expr->n; i++ ) {
+        sym_array[i] = expr->branches[i];
+    }
+
+    sym_array[expr->n] = s;
+
+    free( expr->branches );
     
-    return a;
+    expr->branches = sym_array;
+    expr->n = expr->n + 1;
+
+    return expr;
 
 }
 
 /**
  * @brief Constructor to append a new **NonTerminal** to an existing **AndExpr** object.
  * 
- * @param lst A pointer to an existing **AndExpr** object.
+ * @param expr A pointer to an existing **AndExpr** object.
  * @param nterm A pointer to a **NonTerminal** object.
- * @return AndExpr* Pointer to a newly created **AndExpr** object.
  */
-AndExpr* appendNonTerminal( AndExpr* lst, NonTerminal* nterm ) {
+AndExpr* append_ToAndExpr_NonTerminal( AndExpr* expr, NonTerminal* nterm ) {
 
-    AndExpr* a = (AndExpr*) malloc(sizeof(AndExpr));
+    Symbol* s = (Symbol*) malloc( sizeof(Symbol) );
+    s->type = NON_TERMINAL_SYMBOL;
+    s->term = nterm;
 
-    a->id = idGenerator++;
-    a->prevAndExpr = lst;
-    a->type = NONTERM;
-    a->nterm = nterm;
+    Symbol** sym_array = (Symbol**) malloc( sizeof(Symbol*) * (expr->n + 1) );
+
+    for( int i=0; i<expr->n; i++ ) {
+        sym_array[i] = expr->branches[i];
+    }
+
+    sym_array[expr->n] = s;
+
+    free( expr->branches );
     
-    return a;
+    expr->branches = sym_array;
+    expr->n = expr->n + 1;
 
+    return expr;
+
+}
+
+int getAndExpr_id( AndExpr* expr ) {
+    return expr->id;
 }
 
 /**
  * @brief Destructor for an **AndExpr** object.
  * 
- * @param AndExpression A pointer to the **AndExpr** object you want to destruct.
+ * @param expr A pointer to the **AndExpr** object you want to destruct.
  */
-void freeAndExpr(AndExpr* AndExpression) {
+void freeAndExpr(AndExpr* expr) {
 
-    if( AndExpression->type == TERM ) {
+    for( int i=0; i<expr->n; i++ ) {
+        
+        if( expr->branches[i]->type == TERMINAL_SYMBOL ) {
 
-        freeTerminal( AndExpression->term );
-        free( AndExpression->term );
-        AndExpression->term = NULL;
+            freeTerminal( expr->branches[i]->term );
+            
 
-    } else {
+        } else if ( expr->branches[i]->type == NON_TERMINAL_SYMBOL ) {
 
-        freeNonTerminal( AndExpression->nterm );
-        free( AndExpression->nterm );
-        AndExpression->nterm = NULL;
+            freeNonTerminal( expr->branches[i]->nterm );
+            
+        }
+
+        free( expr->branches[i] );
+        expr->branches[i] = NULL;
 
     }
 
-    if( AndExpression->prevAndExpr != NULL ) {
-        freeAndExpr( AndExpression->prevAndExpr );
-    }
-
-    free( AndExpression->prevAndExpr );
-    AndExpression->prevAndExpr = NULL;
+    free( expr->branches );
+    expr->branches = NULL;
+    expr->n = 0;
 
 }
 
 /**
  * @brief Prints a string representation of an **AndExpr** object.
  * 
- * @param AndExpression A pointer to the **AndExpr** object you want to print.
+ * @param expr A pointer to the **AndExpr** object you want to print.
  */
-void printAndExpr( AndExpr* AndExpression ) {
+void printAndExpr( AndExpr* expr ) {
 
-    if( AndExpression->type == TERM ) {
-        printTerminal(AndExpression->term);
-    } else {
-        printNonTerminal(AndExpression->nterm);
-    }
+    for( int i=0; i<expr->n; i++ ) {
 
-    if( AndExpression->prevAndExpr != NULL ) {
+        if( expr->branches[i]->type == TERMINAL_SYMBOL ) {
+            printTerminal(expr->branches[i]->term);
+        } else if( expr->branches[i]->type == NON_TERMINAL_SYMBOL ) {
+            printNonTerminal(expr->branches[i]->nterm);
+        }
 
-        printf(" ");
-        printAndExpr( AndExpression->prevAndExpr );
+        if( i < expr->n - 1 ) {
+            printf(" ");
+        }
+        
 
-    }
-
-}
-
-/**
- * @brief Internal function to build a graphiz representation of the dependencies of an **AndExpr**. (Used by **buildAndExprNode**)
- * 
- * @param AndExpression A pointer to an **AndExpr** object.
- * @param fp A valid file pointer.
- * @param id The id of the "top level" **AndExpr**. 
- */
-void buildAndExprArrows( AndExpr* AndExpression, FILE* fp, unsigned int id ) {
-
-    if( AndExpression->type == TERM ) {
-        fprintf( fp, "%u -> %u [label=\"Terminal\"];\n", id, AndExpression->term->id );
-        buildTerminalNode( AndExpression->term, fp );
-    } else {
-        fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", id, AndExpression->nterm->id );
-        buildNonTerminalNode(AndExpression->nterm, fp);
-    }
-
-    if( AndExpression->prevAndExpr != NULL ) {
-        buildAndExprArrows( AndExpression->prevAndExpr, fp, id );
     }
 
 }
@@ -171,12 +223,27 @@ void buildAndExprArrows( AndExpr* AndExpression, FILE* fp, unsigned int id ) {
 /**
  * @brief Builds a graphviz representation of an **AndExpr** object and prints it to a file.
  * 
- * @param AndExpression A pointer to an **AndExpression** object.
+ * @param expr A pointer to an **AndExpression** object.
  * @param fp A valid file pointer.
  */
-void buildAndExprNode( AndExpr* AndExpression, FILE* fp ) {
+void build_Graphviz_AndExpr( AndExpr* expr, FILE* fp ) {
 
-    fprintf( fp, "%u [label=\"%s\"];\n", AndExpression->id, "AND" );
-    buildAndExprArrows( AndExpression, fp, AndExpression->id );
+    fprintf( fp, "%u [label=\"%s\"];\n", expr->id, "AND" );
+
+    for( int i=0; i < expr->n; i++ ) {
+
+        if( expr->branches[i]->type == TERMINAL_SYMBOL ) {
+
+            fprintf( fp, "%u -> %u [label=\"Terminal\"];\n", expr->id, getTerminal_id( expr->branches[i]->term ) );
+            build_Graphviz_Terminal( expr->branches[i]->term, fp );
+
+        } else if( expr->branches[i]->type == NON_TERMINAL_SYMBOL ) {
+
+            fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", expr->id, getNonTerminal_id( expr->branches[i]->nterm ) );
+            build_Graphviz_NonTerminal(expr->branches[i]->nterm, fp);
+
+        }
+
+    }
 
 }

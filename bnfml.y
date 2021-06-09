@@ -77,27 +77,27 @@ binding_list
     ;
 
 binding
-    : non_terminal ASSIGN or_expression         { $$ = createBinding( $1, $3 ); } 
+    : non_terminal ASSIGN or_expression         { $$ = new_Binding( $1, $3 ); } 
     ;
 
 or_expression
-    : or_expression PIPE and_expression         { $$ = appendAndExpr( $1, $3 ); } 
-    | and_expression                            { $$ = createOrExpr( $1 ); } 
+    : or_expression PIPE and_expression         { $$ = append_ToOrExpr_AndExpr( $1, $3 ); } 
+    | and_expression                            { $$ = new_OrExpr( $1 ); } 
     ;
 
 and_expression
-    : and_expression non_terminal               { $$ = appendNonTerminal($1, $2); }
-    | and_expression terminal                   { $$ = appendTerminal($1, $2); }
-    | non_terminal                              { $$ = createNonTerminalAndExpr($1); }
-    | terminal                                  { $$ = createTerminalAndExpr($1); }
+    : and_expression non_terminal               { $$ = append_ToAndExpr_NonTerminal($1, $2); }
+    | and_expression terminal                   { $$ = append_ToAndExpr_Terminal($1, $2); }
+    | non_terminal                              { $$ = new_AndExpr_NonTerminal($1); }
+    | terminal                                  { $$ = new_AndExpr_Terminal($1); }
     ; 
 
 non_terminal
-    : NON_TERMINAL_VAL                          { $$ = createNonTerminal($1); }
+    : NON_TERMINAL_VAL                          { $$ = new_NonTerminal($1); }
     ;
 
 terminal
-    : TERMINAL_VAL                              { $$ = createTerminal($1); }
+    : TERMINAL_VAL                              { $$ = new_Terminal($1); }
     ;
 
 

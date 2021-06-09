@@ -18,7 +18,7 @@
     #include "Terminal.h"
     #include "NonTerminal.h"
 
-    typedef struct AndExpr AndExpr;
+    
 
     /**
      * \addtogroup AndExpression
@@ -26,44 +26,19 @@
      */
 
 
-    /**
-     * @enum SymbolType
-     * @brief Enum to represent the types a symbol can be.
-     * 
-     */
-    enum SymbolType {
-
-        TERM, /**< Enum value to reprsent a **Terminal** value. */
-        NONTERM /**< Enum value to represent a **NonTerminal** value. */
-
-    };
-
-    /**
-     * @struct **AndExpr**
-     * @brief struct to define a parsed **AndExpr** value in BNFML
-     * 
-     */
-    struct AndExpr { // TODO AndExpression does not need to be a linked list.
-
-        unsigned int id; /**< Global ID of the object. see: idGenerator*/
-        AndExpr* prevAndExpr; /**< A pointer to an **AndExpr** object.*/
-        enum SymbolType type; /**< Enum **SymbolType** used to determine the type of symbol this object contains */
-        union {
-            NonTerminal* nterm; /**< A pointer to a **NonTerminal** object.*/
-            Terminal* term; /**< A pointer to a **Terminal** object.*/
-        };
-
-    }; 
+    typedef struct AndExpr AndExpr; 
     
-    AndExpr* createTerminalAndExpr( Terminal* term );
-    AndExpr* createNonTerminalAndExpr( NonTerminal* nterm );
+    AndExpr* new_AndExpr_Terminal( Terminal* term );
+    AndExpr* new_AndExpr_NonTerminal( NonTerminal* nterm );
 
-    AndExpr* appendTerminal( AndExpr* lst, Terminal* term );
-    AndExpr* appendNonTerminal( AndExpr* lst, NonTerminal* nterm );
+    AndExpr* append_ToAndExpr_Terminal( AndExpr* expr, Terminal* term );
+    AndExpr* append_ToAndExpr_NonTerminal( AndExpr* expr, NonTerminal* nterm );
     
-    void freeAndExpr(AndExpr* AndExpression);
+    int getAndExpr_id( AndExpr* expr );
     void printAndExpr( AndExpr* AndExpression );
-    void buildAndExprNode( AndExpr* AndExpression, FILE* fp );
+    void build_Graphviz_AndExpr( AndExpr* expr, FILE* fp );
+
+    void freeAndExpr(AndExpr* AndExpression);
 
     /** @} */
 
