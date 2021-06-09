@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ExecutionTree.h"
+#include "ExecutionGraph.h"
 #include "ParserTree.h"
 
 /**
@@ -81,6 +81,28 @@ ExecutionNode* createOrExecutionNode( ) {
     node->NodeType = OR_NODE;
     
     return node;
+
+}
+
+void buildGraphvizExecutionNodeRepresentation( ExecutionNode* node, FILE* fp ) {
+
+    if( node->NodeType == TERMINAL_NODE ) {
+
+        fprintf( fp, "%u [label=\"%s\"];\n", node->id, node->term );
+
+    } else if( node->NodeType == NON_TERMINAL_NODE ) {
+
+        fprintf( fp, "%u [label=\"%s\"];\n", node->id, node->nterm );
+
+    } else if( node->NodeType == AND_NODE ) {
+
+        fprintf( fp, "%u [label=\"AND\"];\n", node->id);
+
+    } else if( node->NodeType == OR_NODE ) {
+
+        fprintf( fp, "%u [label=\"OR\"];\n", node->id );
+
+    }
 
 }
 

@@ -2,17 +2,17 @@
 
 /**
  * 
- * @file ExecutionTree.h
+ * @file ExecutionGraph.h
  * @author Andre Tabourian
  * @version 0.0.1
  * @date 6 Jun 2021
- * @brief Header file containing struct and function definition to create an ExecutionTree.
+ * @brief Header file containing struct and function definition to create an ExecutionGraph.
  * @bug No known bugs.
  */
 
-#ifndef EXECUTION_TREE
+#ifndef EXECUTION_GRAPH
     
-    #define EXECUTION_TREE
+    #define EXECUTION_GRAPH
 
     #include <stdlib.h>
     #include "ParserTree.h"
@@ -55,12 +55,13 @@
     }; 
     
 
-
+    
     ExecutionNode* createTerminalExecutionNode( Terminal* term );
     ExecutionNode* createNonTerminalExecutionNode( NonTerminal* nterm );
     ExecutionNode* createAndExecutionNode( );
     ExecutionNode* createOrExecutionNode( );
 
+    void buildGraphvizExecutionNodeRepresentation( ExecutionNode* node, FILE* fp );
     void freeExecutionNode(ExecutionNode* leaf);
     
 
@@ -69,15 +70,16 @@
 
 
     /**
-     * \addtogroup ExecutionTree
+     * \addtogroup ExecutionGraph
      * @{
      */
 
-    typedef struct ExecutionTree ExecutionTree; 
+    typedef struct ExecutionGraph ExecutionGraph; 
     
-    ExecutionTree* buildExecutionTree( BindingList* lst );
+    ExecutionGraph* buildExecutionGraph( BindingList* lst );
+    void buildGraphvizExecutionGraphRepresentation( ExecutionGraph* G, FILE* fp );
 
-    void freeExecutionTree(ExecutionTree* tree);
+    void freeExecutionGraph(ExecutionGraph* tree);
     
     /** @} */
 

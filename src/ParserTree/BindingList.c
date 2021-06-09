@@ -157,7 +157,7 @@ Binding* verifyUniquenessOfBindings( BindingList* lst ) {
 
         while( fast != NULL ) {
 
-            if( strcmp( fast->binding->nterm->Name, slow->binding->nterm->Name ) ) {
+            if( strcmp( fast->binding->nterm->Name, slow->binding->nterm->Name ) == 0 ) {
                 b = slow->binding;
                 break;
             }
@@ -188,7 +188,7 @@ Binding* searchForBinding( BindingList* lst, char* nterm ) {
     BindingList* current = lst;
     while( current != NULL ) {
 
-        if( strcmp(current->binding->nterm->Name, nterm)  ) {
+        if( strcmp(current->binding->nterm->Name, nterm) == 0  ) {
             b = current->binding;
             break;
         }

@@ -2,12 +2,12 @@
 
 INC=./include
 PTREE=./src/ParserTree
-ETREE=./src/ExecutionTree
+ETREE=./src/ExecutionGraph
 GEN=./src/Generated
 OBJ=./obj
 EXE=./bin
 
-COMPILE=${OBJ}/AndExpr.o ${OBJ}/Binding.o ${OBJ}/BindingList.o ${OBJ}/NonTerminal.o ${OBJ}/OrExpr.o ${OBJ}/Terminal.o ${OBJ}/bnfml.tab.o ${OBJ}/lex.yy.o ${OBJ}/ExecutionNode.o ${OBJ}/ExecutionTree.o
+COMPILE=${OBJ}/AndExpr.o ${OBJ}/Binding.o ${OBJ}/BindingList.o ${OBJ}/NonTerminal.o ${OBJ}/OrExpr.o ${OBJ}/Terminal.o ${OBJ}/bnfml.tab.o ${OBJ}/lex.yy.o ${OBJ}/ExecutionNode.o ${OBJ}/ExecutionGraph.o
 
 
 
@@ -36,10 +36,10 @@ ${OBJ}/Terminal.o: ${PTREE}/Terminal.c ${INC}/ParserTree.h
 
 
 
-${OBJ}/ExecutionNode.o: ${ETREE}/ExecutionNode.c ${INC}/ParserTree.h ${INC}/ExecutionTree.h
+${OBJ}/ExecutionNode.o: ${ETREE}/ExecutionNode.c ${INC}/ParserTree.h ${INC}/ExecutionGraph.h
 	gcc -Iinclude -c $< -o $@
 
-${OBJ}/ExecutionTree.o: ${ETREE}/ExecutionTree.c ${INC}/ParserTree.h ${INC}/ExecutionTree.h
+${OBJ}/ExecutionGraph.o: ${ETREE}/ExecutionGraph.c ${INC}/ParserTree.h ${INC}/ExecutionGraph.h
 	gcc -Iinclude -c $< -o $@
 
 

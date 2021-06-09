@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "ParserTree.h"
+#include "ExecutionGraph.h"
 
 extern FILE *yyin;
 FILE* outFile;
@@ -116,8 +117,21 @@ void doThis( BindingList* lst ) {
 
     fclose(fp);
 
+    ExecutionGraph* G = buildExecutionGraph( lst );
+
     freeBindingList( lst );
     free( lst ); 
+
+    fp = fopen( "log/ExecutionGraph.dot", "w" );
+
+    fprintf( fp, "digraph tree {\n" );
+    buildGraphvizExecutionGraphRepresentation( G, fp );
+    fprintf( fp, "}\n" );
+
+    fclose(fp);
+
+    freeExecutionGraph( G );
+    free( G );
 
 }
 

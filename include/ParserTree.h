@@ -102,7 +102,7 @@
      * @brief struct to define a parsed **AndExpr** value in BNFML
      * 
      */
-    struct AndExpr {
+    struct AndExpr { // TODO AndExpression does not need to be a linked list.
 
         unsigned int id; /**< Global ID of the object. see: idGenerator*/
         AndExpr* prevAndExpr; /**< A pointer to an **AndExpr** object.*/
@@ -136,7 +136,7 @@
      * @brief struct to define a parsed **OrExpr** value in BNFML
      * 
      */
-    struct OrExpr {
+    struct OrExpr { // TODO OrExpression does not need to be a linked list
 
         unsigned int id; /**< Global ID of the object. see: idGenerator*/
         OrExpr* prevOrExpr; /**< A pointer to an **OrExpr** object.*/
