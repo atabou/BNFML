@@ -37,8 +37,8 @@
 
     }; 
     
-    BindingList* createBindingListFromBinding( Binding* b );
-    BindingList* appendBinding( BindingList* lst, Binding* b );
+    BindingList* new_BindingList( Binding* b );
+    BindingList* append_ToBindingList_Binding( BindingList* lst, Binding* b );
     
     void freeBindingList( BindingList* bindingList );
     void printBindingList( BindingList* lst );

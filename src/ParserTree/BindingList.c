@@ -12,7 +12,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ParserTree.h"
+#include "BindingList.h"
+#include "Binding.h"
+#include "Common.h"
 
 /**
  * @brief Constructor to create a **Binding** object.
@@ -20,11 +22,11 @@
  * @param b A pointer to a **Binding** object.
  * @return BindingList* Pointer to a newly created **BindingList** object.
  */
-BindingList* createBindingListFromBinding( Binding* b ) {
+BindingList* new_BindingList( Binding* b ) {
 
     BindingList* r = (BindingList*) malloc( sizeof(BindingList) );
     
-    r->id = idGenerator++;
+    r->id = ParserID_Generator++;
     r->prevBindings = NULL;
     r->binding = b;
 
@@ -39,13 +41,16 @@ BindingList* createBindingListFromBinding( Binding* b ) {
  * @param b A pointer to a **Binding** object.
  * @return BindingList* Pointer to a newly created **BindingList** object.
  */
-BindingList* appendBinding( BindingList* lst, Binding* b ) {
+BindingList* append_ToBindingList_Binding( BindingList* lst, Binding* b ) {
 
     BindingList* r = (BindingList*) malloc( sizeof(BindingList) );
-    r->id = idGenerator++;
+
+    r->id = ParserID_Generator++;
     r->prevBindings = lst;
     r->binding = b;
     
+    return b;
+
 }
 
 /**
@@ -118,7 +123,7 @@ void printBindingList( BindingList* lst ) {
  */
 void buildBindingListArrows( BindingList* lst, FILE* fp, unsigned int id ) {
 
-    fprintf( fp, "%u -> %u;\n", id, lst->binding->id );
+    fprintf( fp, "%u -> %u;\n", id, getBinding_id(lst->binding) );
     buildBindingNode( lst->binding, fp );
 
     if( lst->prevBindings != NULL ) {

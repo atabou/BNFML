@@ -26,6 +26,8 @@
     
     Binding* new_Binding( NonTerminal* nterm, OrExpr* OrExpression );
     
+    unsigned int getBinding_id( Binding* b );
+
     void freeBinding( Binding* binding );
     void printBinding( Binding* b );
     void buildBindingNode( Binding* b, FILE* fp );

@@ -48,6 +48,10 @@ Binding* new_Binding( NonTerminal* nterm, OrExpr* OrExpression ) {
 
 }
 
+int getBinding_id( Binding* b ) {
+    return b->id;
+}
+
 /**
  * @brief Destructor for a **Binding** object.
  * 
@@ -84,7 +88,7 @@ void printBinding( Binding* b ) {
  * @param b A pointer to an **Binding** object.
  * @param fp A valid file pointer.
  */
-void buildBindingNode( Binding* b, FILE* fp ) {
+void build_Graphviz_Binding( Binding* b, FILE* fp ) {
 
     fprintf( fp, "%u [label=\"%s\"];\n", b->id, "Binding" );
 
