@@ -72,14 +72,13 @@ bnf
     : binding_list                              { doThis($1); }
     ;
 
-
 binding_list
     : binding_list NL binding                   { $$ = append_ToBindingList_Binding($1, $3); }
     | binding                                   { $$ = new_BindingList( $1 ); }
     ;
 
 binding
-    : non_terminal ASSIGN or_expression         { $$ = new_Binding( $1, $3 ); } 
+    : non_terminal ASSIGN or_expression         { $$ = new_Binding( $1, $3 ); }
     ;
 
 or_expression

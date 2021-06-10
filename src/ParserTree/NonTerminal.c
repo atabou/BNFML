@@ -14,12 +14,10 @@
 #include "ParserTree/NonTerminal.h"
 #include "Common.h"
 
-struct NonTerminal {
-
-    unsigned int id; /**< Global ID of the object. see: idGenerator*/
-    char* name; /**< A string representing the name of a non-terminal.*/
-
-}; 
+void build_Graphviz_NonTerminal( void* this, FILE* fp );
+void printNonTerminal( void* this );
+void freeNonTerminal( void* this );
+unsigned int getNonTerminal_id( void* this );
 
 /**
  * @brief Constructor to create a **Non-Terminal** object.
@@ -34,12 +32,22 @@ NonTerminal* new_NonTerminal( char* name ) {
     nt->id = ParserID_Generator++;
     nt->name = name;
 
+    nt->fn = (CommonInterface*) malloc( sizeof(CommonInterface) );
+
+    nt->fn->print = printNonTerminal;
+    nt->fn->build_Graphviz = build_Graphviz_NonTerminal;
+    nt->fn->destruct = freeNonTerminal;
+    nt->fn->getID = getNonTerminal_id;
+
     return nt;
 
 }
 
-unsigned int getNonTerminal_id( NonTerminal* nterm ) {
+unsigned int getNonTerminal_id( void* this ) {
+
+    NonTerminal* nterm = this;
     return nterm->id;
+
 }
 
 char* getNonTerminal_name( NonTerminal* nterm ) {
@@ -51,10 +59,15 @@ char* getNonTerminal_name( NonTerminal* nterm ) {
  * 
  * @param term A pointer to the **Non-Terminal** object you want to destruct.
  */
-void freeNonTerminal( NonTerminal* nterm ) {
+void freeNonTerminal( void* this ) {
+
+    NonTerminal* nterm = this;
 
     free(nterm->name);
     nterm->name = NULL;
+
+    free( nterm->fn );
+    nterm->fn = NULL;
     
 }
 
@@ -63,8 +76,9 @@ void freeNonTerminal( NonTerminal* nterm ) {
  * 
  * @param term A pointer to the **Terminal** object you want to print.
  */
-void printNonTerminal( NonTerminal* nterm ) {
+void printNonTerminal( void* this ) {
 
+    NonTerminal* nterm = this;
     printf( "%s", nterm->name );
 
 }
@@ -75,8 +89,9 @@ void printNonTerminal( NonTerminal* nterm ) {
  * @param term A pointer to a **Terminal** object.
  * @param fp A valid file pointer.
  */
-void build_Graphviz_NonTerminal( NonTerminal* nterm, FILE* fp ) {
+void build_Graphviz_NonTerminal( void* this, FILE* fp ) {
 
+    NonTerminal* nterm = this;
     fprintf( fp, "%u [label=\"%s\"];\n", nterm->id, nterm->name );
 
 }

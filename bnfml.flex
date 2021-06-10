@@ -21,12 +21,13 @@ char* concatenateStrings( char* s, char* cat );
 NonTerminal             \<
 Terminal                '
 OR                      [\n\t\r ]*\|[\n\t\r ]*
+ASSIGN                  [\t\r\n ]*::=[\t\r\n ]*
 
 %%
 
 {NonTerminal}           { yylval.non_terminal_value = iterateOverNonTerminal(); return NON_TERMINAL_VAL; }
 {Terminal}              { yylval.terminal_value = iterateOverTerminal(); return TERMINAL_VAL; }
-::=                     { return ASSIGN; }
+{ASSIGN}                { return ASSIGN; }
 {OR}                    { return PIPE; }
 [\n]+                   { return NL; }
 [\r\t ]+                /*Do nothing*/

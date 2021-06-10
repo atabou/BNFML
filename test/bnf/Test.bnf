@@ -1,1 +1,4 @@
-<bnf> ::= <hello>
+<bnf> ::= 
+    'hello'
+    |       'hell'
+    

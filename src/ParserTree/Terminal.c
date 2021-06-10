@@ -13,20 +13,12 @@
 #include <stdlib.h>
 
 #include "ParserTree/Terminal.h"
-#include "Common.h"
+#include "Common.h" 
 
-
-/**
- * @struct **Terminal**
- * @brief struct to define a parsed **Terminal** value in BNFML
- * 
- */
-struct Terminal {
-
-    unsigned int id; /**< Global ID of the object. see: idGenerator*/
-    char* value; /**< A regular expression representing the values a terminal can take.*/
-
-}; 
+void build_Graphviz_Terminal( void* this, FILE* fp );
+void printTerminal( void* this );
+void freeTerminal( void* this );
+unsigned int getTerminal_id( void* this );
 
 /**
  * @brief Constructor to create a **Terminal** object.
@@ -41,12 +33,21 @@ Terminal* new_Terminal( char* value ) {
     t->id = ParserID_Generator++;
     t->value = value;
 
+    t->fn = (CommonInterface*) malloc( sizeof(CommonInterface) );
+
+    t->fn->print = printTerminal;
+    t->fn->build_Graphviz = build_Graphviz_Terminal;
+    t->fn->destruct = freeTerminal;
+    t->fn->getID = getTerminal_id;
+
     return t;
 
 }
 
-unsigned int getTerminal_id( Terminal* term ) {
+unsigned int getTerminal_id( void* this ) {
 
+    Terminal* term = this;
+    printf( "Terminal ID:\n");
     return term->id;
 
 }
@@ -57,16 +58,22 @@ char* getTerminal_value( Terminal* term ) {
 
 }
 
-
 /**
  * @brief Destructor for a **Terminal** object.
  * 
  * @param term A pointer to the terminal object you want to destruct.
  */
-void freeTerminal( Terminal* term ) {
+void freeTerminal( void* this ) {
 
+    Terminal* term = this;
+    printf( "Terminal ID: %d\n", term->id);
+    
     free( term->value );
     term->value = NULL;
+
+    free( term->fn );
+    term->fn = NULL;
+    
 
 }
 
@@ -75,8 +82,10 @@ void freeTerminal( Terminal* term ) {
  * 
  * @param term A pointer to the **Terminal** object you want to print.
  */
-void printTerminal( Terminal* term ) {
+void printTerminal( void* this ) {
 
+    Terminal* term = this;
+    printf( "Pint Terminal:\n");
     printf( "'%s'", term->value );
 
 }
@@ -87,8 +96,10 @@ void printTerminal( Terminal* term ) {
  * @param term A pointer to a **Terminal** object.
  * @param fp A valid file pointer.
  */
-void build_Graphviz_Terminal( Terminal* term, FILE* fp ) {
+void build_Graphviz_Terminal( void* this, FILE* fp ) {
 
+    Terminal* term = this;
+    printf( "Graphiz Terminal:\n");
     fprintf( fp, "%u [label=\"%s\"];\n", term->id, term->value );
 
 }

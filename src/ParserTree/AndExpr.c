@@ -222,12 +222,11 @@ void freeAndExpr(AndExpr* expr) {
         
         if( expr->branches[i]->type == TERMINAL_SYMBOL ) {
 
-            freeTerminal( expr->branches[i]->term );
-            
+            expr->branches[i]->term->fn->destruct( expr->branches[i]->term );
 
         } else if ( expr->branches[i]->type == NON_TERMINAL_SYMBOL ) {
 
-            freeNonTerminal( expr->branches[i]->nterm );
+            expr->branches[i]->nterm->fn->destruct( expr->branches[i]->nterm );
             
         }
 
@@ -252,9 +251,13 @@ void printAndExpr( AndExpr* expr ) {
     for( int i=0; i<expr->n; i++ ) {
 
         if( expr->branches[i]->type == TERMINAL_SYMBOL ) {
-            printTerminal(expr->branches[i]->term);
+
+            expr->branches[i]->term->fn->print( expr->branches[i]->term );
+
         } else if( expr->branches[i]->type == NON_TERMINAL_SYMBOL ) {
-            printNonTerminal(expr->branches[i]->nterm);
+
+            expr->branches[i]->nterm->fn->print( expr->branches[i]->nterm );
+
         }
 
         if( i < expr->n - 1 ) {
@@ -280,13 +283,13 @@ void build_Graphviz_AndExpr( AndExpr* expr, FILE* fp ) {
 
         if( expr->branches[i]->type == TERMINAL_SYMBOL ) {
 
-            fprintf( fp, "%u -> %u [label=\"Terminal\"];\n", expr->id, getTerminal_id( expr->branches[i]->term ) );
-            build_Graphviz_Terminal( expr->branches[i]->term, fp );
+            fprintf( fp, "%u -> %u [label=\"Terminal\"];\n", expr->id, expr->branches[i]->term->fn->getID( expr->branches[i]->term ) );
+            expr->branches[i]->term->fn->build_Graphviz( expr->branches[i]->term, fp );
 
         } else if( expr->branches[i]->type == NON_TERMINAL_SYMBOL ) {
 
-            fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", expr->id, getNonTerminal_id( expr->branches[i]->nterm ) );
-            build_Graphviz_NonTerminal(expr->branches[i]->nterm, fp);
+            fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", expr->id, expr->branches[i]->nterm->fn->getID( expr->branches[i]->nterm ) );
+            expr->branches[i]->nterm->fn->build_Graphviz(expr->branches[i]->nterm, fp);
 
         }
 
