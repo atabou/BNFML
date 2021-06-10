@@ -97,7 +97,7 @@ void freeOrExpr(OrExpr* expr) {
 
     for( int i=0; i<expr->n; i++ ) {
 
-        freeAndExpr( expr->branches[i] );
+        expr->branches[i]->destruct( expr->branches[i] );
         free( expr->branches[i] );
         expr->branches[i] = NULL;
 
@@ -118,7 +118,7 @@ void printOrExpr( OrExpr* expr ) {
 
     for( int i = 0; i < expr->n; i++ ) {
 
-        printAndExpr( expr->branches[i] );
+        expr->branches[i]->print( expr->branches[i] );
         
         if( i < expr->n - 1 ) {
             printf( " | " );
@@ -140,8 +140,8 @@ void build_Graphviz_OrExpr( OrExpr* expr, FILE* fp ) {
     
     for( int i=0; i < expr->n; i++ ) {
 
-        fprintf( fp, "%u -> %u;\n", expr->id, getAndExpr_id( expr->branches[i] ) );
-        build_Graphviz_AndExpr( expr->branches[i], fp );
+        fprintf( fp, "%u -> %u;\n", expr->id, expr->branches[i]->getID( expr->branches[i] ) );
+        expr->branches[i]->toGraphviz( expr->branches[i], fp );
 
     }
 

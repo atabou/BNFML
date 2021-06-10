@@ -28,6 +28,8 @@ unsigned int getTerminal_id( void* this );
  */
 Terminal* new_Terminal( char* value ) {
 
+    printf( "Creating a Terminal expression.\n" );
+
     Terminal* t = (Terminal*) malloc(sizeof(Terminal));
 
     t->id = ParserID_Generator++;
@@ -39,6 +41,8 @@ Terminal* new_Terminal( char* value ) {
     t->fn->build_Graphviz = build_Graphviz_Terminal;
     t->fn->destruct = freeTerminal;
     t->fn->getID = getTerminal_id;
+
+    printf( "[SUCCESS] Finished creating a Terminal expression.\n" );
 
     return t;
 

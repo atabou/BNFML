@@ -17,6 +17,7 @@
 
     #include "Terminal.h"
     #include "NonTerminal.h"
+    #include "Symbol.h"
 
     
 
@@ -25,19 +26,32 @@
      * @{
      */
 
+    typedef struct AndExpr AndExpr; 
+
     /**
-     * @enum SymbolType
-     * @brief Enum to represent the types a symbol can be.
+     * @struct **AndExpr**
+     * @brief struct to define a parsed **AndExpr** value in BNFML
      * 
      */
-    enum SymbolType {
+    struct AndExpr { // TODO AndExpression does not need to be a linked list.
 
-        TERMINAL_SYMBOL, /**< Enum value to reprsent a **Terminal** value. */
-        NON_TERMINAL_SYMBOL /**< Enum value to represent a **NonTerminal** value. */
+        unsigned int id; /**< Global ID of the object. see: idGenerator*/
+        Symbol** branches; /**< Array of pointers to **Symbol** objects. */
+        int n; /**< Integer representing the number of elements in the array */
 
+        // Getters
+        unsigned int (*getID)(AndExpr* this);
+        Symbol** (*getBranches)( AndExpr* this );
+        int (*length)( AndExpr* this );
+        
+        //Methods
+        void (*print)(AndExpr* this);
+        void (*toGraphviz)(AndExpr* this, FILE* fp);
+
+        // Destructor
+        void (*destruct)(AndExpr* this);
+        
     };
-
-    typedef struct AndExpr AndExpr; 
     
     AndExpr* new_AndExpr_Terminal( Terminal* term );
     AndExpr* new_AndExpr_NonTerminal( NonTerminal* nterm );
@@ -45,18 +59,7 @@
     AndExpr* append_ToAndExpr_Terminal( AndExpr* expr, Terminal* term );
     AndExpr* append_ToAndExpr_NonTerminal( AndExpr* expr, NonTerminal* nterm );
     
-    unsigned int getAndExpr_id( AndExpr* expr );
-    enum SymbolType getAndExpr_type( AndExpr* expr, int i );
-    Terminal* getAndExpr_term( AndExpr* expr, int i );
-    NonTerminal* getAndExpr_nterm( AndExpr* expr, int i );
-    int getAndExpr_length( AndExpr* expr );
-    
-    void apply_ToAndExpr( AndExpr* expr, void (*applyToTerm) (), void (*applyToNTerm) () );
-
-    void printAndExpr( AndExpr* AndExpression );
-    void build_Graphviz_AndExpr( AndExpr* expr, FILE* fp );
-
-    void freeAndExpr(AndExpr* AndExpression);
+    // void apply_ToAndExpr( AndExpr* expr, void (*applyToTerm) (), void (*applyToNTerm) () );
 
     /** @} */
 

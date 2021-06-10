@@ -255,9 +255,9 @@ void exploreOrExpr( OrExpr* OrExpression, ExecutionGraph* DirectParent, BindingL
 
     if ( getOrExpr_num_branches( OrExpression ) == 1 ) {
 
-        printf( "Starting exploration of AND expression, id: %d\n", getAndExpr_id( branches[0] ) );
+        printf( "Starting exploration of AND expression, id: %d\n", branches[0]->getID( branches[0] ) );
         exploreAndExpr( branches[0], DirectParent, lst );
-        printf( "[SUCCESS] Finished exploration of AND expression, id: %d\n", getAndExpr_id( branches[0] ) );
+        printf( "[SUCCESS] Finished exploration of AND expression, id: %d\n", branches[0]->getID( branches[0] ) );
 
     } else {
 
@@ -266,9 +266,9 @@ void exploreOrExpr( OrExpr* OrExpression, ExecutionGraph* DirectParent, BindingL
 
         for( int i=0; i<getOrExpr_num_branches(OrExpression); i++ ) {
 
-            printf( "Starting exploration of AND expression, id: %d\n", getAndExpr_id( branches[i] ) );
+            printf( "Starting exploration of AND expression, id: %d\n", branches[i]->getID( branches[i] ) );
             exploreAndExpr( branches[i], OrGraph, lst );
-            printf( "[SUCCESS] Finished exploration of AND expression, id: %d\n", getAndExpr_id( branches[i] ) );
+            printf( "[SUCCESS] Finished exploration of AND expression, id: %d\n", branches[i]->getID( branches[i] ) );
 
         }
 
@@ -287,25 +287,25 @@ void exploreOrExpr( OrExpr* OrExpression, ExecutionGraph* DirectParent, BindingL
  */
 void exploreAndExpr( AndExpr* expr, ExecutionGraph* DirectParent, BindingList* lst ) {
 
-    int n = getAndExpr_length(expr);
+    int n = expr->length( expr );
 
     if( n == 1 ) {
 
-        if( getAndExpr_type(expr, 0) == TERMINAL_SYMBOL ) {
+        if( expr->branches[0]->getType( expr->branches[0] ) == TERMINAL_SYMBOL ) {
 
-            Terminal* term = getAndExpr_term( expr, 0 );
+            Terminal* term = expr->branches[0]->getTerminal( expr->branches[0] );
 
-            printf( "Starting exploration of Terminal: %s, id: %d\n", getTerminal_value(term), getTerminal_id(term) );
+            printf( "Starting exploration of Terminal: %s, id: %d\n", getTerminal_value(term), term->fn->getID(term) );
             exploreTerminal( term, DirectParent );
-            printf( "[SUCCESS] Finished exploration of Terminal: %s, id: %d\n", getTerminal_value(term), getTerminal_id(term) );
+            printf( "[SUCCESS] Finished exploration of Terminal: %s, id: %d\n", getTerminal_value(term), term->fn->getID(term) );
 
-        } else if( getAndExpr_type(expr, 0) == NON_TERMINAL_SYMBOL ) {
+        } else if( expr->branches[0]->getType( expr->branches[0] ) == NON_TERMINAL_SYMBOL ) {
 
-            NonTerminal* nterm = getAndExpr_nterm( expr, 0 );
+            NonTerminal* nterm = expr->branches[0]->getNonTerminal( expr->branches[0] );
 
-            printf( "Starting exploration of Non-Terminal: %s, id: %d\n", getNonTerminal_name(nterm), getNonTerminal_id(nterm) );
+            printf( "Starting exploration of Non-Terminal: %s, id: %d\n", getNonTerminal_name(nterm), nterm->fn->getID( nterm ) );
             exploreNonTerminal( nterm, DirectParent, lst );
-            printf( "[SUCCESS] Finished exploration of Non-Terminal: %s, id: %d\n", getNonTerminal_name(nterm), getNonTerminal_id(nterm) );
+            printf( "[SUCCESS] Finished exploration of Non-Terminal: %s, id: %d\n", getNonTerminal_name(nterm), nterm->fn->getID(nterm) );
 
         }
 
@@ -316,21 +316,21 @@ void exploreAndExpr( AndExpr* expr, ExecutionGraph* DirectParent, BindingList* l
 
         for( int i=0; i < n; i++ ) {
 
-            if( getAndExpr_type( expr, i ) == TERMINAL_SYMBOL ) {
+            if( expr->branches[i]->getType( expr->branches[i] ) == TERMINAL_SYMBOL ) {
 
-                Terminal* term = getAndExpr_term( expr, i );
+                Terminal* term = expr->branches[i]->getTerminal( expr->branches[i] );
 
-                printf( "Starting exploration of Terminal: %s, id: %d\n", getTerminal_value(term), getTerminal_id(term) );
+                printf( "Starting exploration of Terminal: %s, id: %d\n", getTerminal_value(term), term->fn->getID(term) );
                 exploreTerminal( term, AndGraph );
-                printf( "[SUCCESS] Finished exploration of Terminal: %s, id: %d\n", getTerminal_value(term), getTerminal_id(term) );
+                printf( "[SUCCESS] Finished exploration of Terminal: %s, id: %d\n", getTerminal_value(term), term->fn->getID(term) );
 
-            } else if ( getAndExpr_type( expr, i ) == NON_TERMINAL_SYMBOL ) {
+            } else if ( expr->branches[i]->getType( expr->branches[i] ) == NON_TERMINAL_SYMBOL ) {
 
-                NonTerminal* nterm = getAndExpr_nterm( expr, i );
+                NonTerminal* nterm = expr->branches[i]->getNonTerminal( expr->branches[i] );
 
-                printf( "Starting exploration of Non-Terminal: %s, id: %d\n", getNonTerminal_name(nterm), getNonTerminal_id(nterm) );
+                printf( "Starting exploration of Non-Terminal: %s, id: %d\n", getNonTerminal_name(nterm), nterm->fn->getID(nterm) );
                 exploreNonTerminal( nterm, AndGraph, lst );
-                printf( "[SUCCESS] Finished exploration of Non-Terminal: %s, id: %d\n", getNonTerminal_name(nterm), getNonTerminal_id(nterm) );
+                printf( "[SUCCESS] Finished exploration of Non-Terminal: %s, id: %d\n", getNonTerminal_name(nterm), nterm->fn->getID(nterm) );
 
             }
 
@@ -375,9 +375,11 @@ void exploreNonTerminal( NonTerminal* nterm, ExecutionGraph* DirectParent, Bindi
 
     } else {
 
-        printf( "Found a recursive call at Non-Terminal: %s, from id: %d to id: %d\n", getNonTerminal_name(nterm), getNonTerminal_id(nterm), getNonTerminal_id(getBinding_nterm(b)) );
+        NonTerminal* rec = getBinding_nterm(b);
+
+        printf( "Found a recursive call at Non-Terminal: %s, from id: %d to id: %d\n", getNonTerminal_name(nterm), nterm->fn->getID( nterm ), rec->fn->getID( rec ) );
         appendNewBranch( NonTerminalGraph, RecursiveNode );
-        printf( "[SUCCESS] Added a recursive call for Non-Terminal: %s, from id: %d to id: %d\n", getNonTerminal_name(nterm), getNonTerminal_id(nterm), getNonTerminal_id(getBinding_nterm(b)) );
+        printf( "[SUCCESS] Added a recursive call for Non-Terminal: %s, from id: %d to id: %d\n", getNonTerminal_name(nterm), nterm->fn->getID( nterm ), rec->fn->getID( rec ) );
 
     }
 

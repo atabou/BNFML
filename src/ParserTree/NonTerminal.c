@@ -27,17 +27,21 @@ unsigned int getNonTerminal_id( void* this );
  */
 NonTerminal* new_NonTerminal( char* name ) {
 
+    printf( "Creating a Non-Terminal expression.\n" );
+
     NonTerminal* nt = (NonTerminal*) malloc(sizeof(NonTerminal));
 
     nt->id = ParserID_Generator++;
     nt->name = name;
 
-    nt->fn = (CommonInterface*) malloc( sizeof(CommonInterface) );
+    nt->fn = (CommonInterface*) malloc( sizeof( CommonInterface ) );
 
     nt->fn->print = printNonTerminal;
     nt->fn->build_Graphviz = build_Graphviz_NonTerminal;
     nt->fn->destruct = freeNonTerminal;
     nt->fn->getID = getNonTerminal_id;
+
+    printf( "[SUCCESS] Finished creating a Non-Terminal expression.\n" );
 
     return nt;
 
