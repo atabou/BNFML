@@ -87,10 +87,10 @@ or_expression
     ;
 
 and_expression
-    : and_expression non_terminal               { $$ = append_ToAndExpr_NonTerminal($1, $2); }
-    | and_expression terminal                   { $$ = append_ToAndExpr_Terminal($1, $2); }
-    | non_terminal                              { $$ = new_AndExpr_NonTerminal($1); }
-    | terminal                                  { $$ = new_AndExpr_Terminal($1); }
+    : and_expression non_terminal               { $1->append( $1, (Symbol*) $2 ); $$ = $1; }
+    | and_expression terminal                   { $1->append( $1, (Symbol*) $2 ); $$ = $1; }
+    | non_terminal                              { $$ = new_AndExpr( (Symbol*) $1); }
+    | terminal                                  { $$ = new_AndExpr( (Symbol*) $1); }
     ; 
 
 non_terminal

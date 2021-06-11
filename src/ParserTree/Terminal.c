@@ -13,97 +13,107 @@
 #include <stdlib.h>
 
 #include "ParserTree/Terminal.h"
+#include "ParserTree/Symbol.h"
 #include "Common.h" 
 
-void build_Graphviz_Terminal( void* this, FILE* fp );
-void printTerminal( void* this );
-void freeTerminal( void* this );
-unsigned int getTerminal_id( void* this );
+char* terminalValueGet( Terminal* this );
 
-/**
- * @brief Constructor to create a **Terminal** object.
- * 
- * @param value String in the form of a regular expression, representing the value of a **Terminal** object.
- * @return Terminal* Pointer to a newly created **Terminal** object.
- */
+unsigned int inheritedGetID( Terminal* this );
+
+void terminalPrint( Terminal* this );
+void dispatchPrint( Symbol* super );
+
+void terminalBuildGraphviz( Terminal* this, FILE* fp );
+void dispatchBuildGraphviz( Symbol* super, FILE* fp );
+
+enum SymbolType dynamictype_Terminal_AND_Dispatch(  );
+
+void terminalDestruct( Terminal* this );
+void dispatchDestruct( Symbol* super );
+
+
 Terminal* new_Terminal( char* value ) {
 
     printf( "Creating a Terminal expression.\n" );
 
-    Terminal* t = (Terminal*) malloc(sizeof(Terminal));
+    Terminal* term = (Terminal*) malloc(sizeof(Terminal));
 
-    t->id = ParserID_Generator++;
-    t->value = value;
+    // Allocate memory, and assign a value to the private fields.
+    term->super = *new_Symbol( );
 
-    t->fn = (CommonInterface*) malloc( sizeof(CommonInterface) );
+    // Populate private variables
+    term->value = value;
 
-    t->fn->print = printTerminal;
-    t->fn->build_Graphviz = build_Graphviz_Terminal;
-    t->fn->destruct = freeTerminal;
-    t->fn->getID = getTerminal_id;
+    // Class methods
+    term->getValue = terminalValueGet;
+    term->getID = inheritedGetID;
+
+    // Implementation of abstract methods
+    term->print = terminalPrint;
+    term->build_Graphviz = terminalBuildGraphviz;
+    term->destruct = terminalDestruct;
+    term->getDynamicType = dynamictype_Terminal_AND_Dispatch;
+
+    // Method dispatch
+    term->super.print = dispatchPrint;
+    term->super.build_Graphviz = dispatchBuildGraphviz;
+    term->super.getDynamicType = dynamictype_Terminal_AND_Dispatch;
+
 
     printf( "[SUCCESS] Finished creating a Terminal expression.\n" );
 
-    return t;
+    return term;
 
 }
 
-unsigned int getTerminal_id( void* this ) {
+unsigned int inheritedGetID( Terminal* this ) {
 
-    Terminal* term = this;
-    printf( "Terminal ID:\n");
-    return term->id;
+    return this->super.getID( (Symbol*) this );
 
 }
 
-char* getTerminal_value( Terminal* term ) {
+char* terminalValueGet( Terminal* this ) {
 
-    return term->value;
+    return this->value;
 
 }
 
-/**
- * @brief Destructor for a **Terminal** object.
- * 
- * @param term A pointer to the terminal object you want to destruct.
- */
-void freeTerminal( void* this ) {
-
-    Terminal* term = this;
-    printf( "Terminal ID: %d\n", term->id);
+void terminalDestruct( Terminal* this ) {
     
-    free( term->value );
-    term->value = NULL;
+    free( this->value );
+    this->value = NULL;
 
-    free( term->fn );
-    term->fn = NULL;
-    
-
-}
-
-/**
- * @brief Prints a string representation of a **Terminal** object.
- * 
- * @param term A pointer to the **Terminal** object you want to print.
- */
-void printTerminal( void* this ) {
-
-    Terminal* term = this;
-    printf( "Pint Terminal:\n");
-    printf( "'%s'", term->value );
+    this->super.destruct( (Symbol*) this );
+    free( &(this->super) );
 
 }
 
-/**
- * @brief Builds a graphviz representation of a **Terminal** object and prints it to a file.
- * 
- * @param term A pointer to a **Terminal** object.
- * @param fp A valid file pointer.
- */
-void build_Graphviz_Terminal( void* this, FILE* fp ) {
+void terminalPrint( Terminal* this ) {
 
-    Terminal* term = this;
-    printf( "Graphiz Terminal:\n");
-    fprintf( fp, "%u [label=\"%s\"];\n", term->id, term->value );
+    printf( "'%s'", this->value );
 
+}
+
+void dispatchPrint( Symbol* super ) {
+
+    Terminal* this = (Terminal*) super;
+    this->print( this );
+
+}
+
+void terminalBuildGraphviz( Terminal* this, FILE* fp ) {
+
+    fprintf( fp, "%u [label=\"%s\"];\n", this->getID( this ), this->value );
+
+}
+
+void dispatchBuildGraphviz( Symbol* super, FILE* fp ) {
+
+    Terminal* this = (Terminal*) super;
+    this->build_Graphviz( this, fp );
+
+}
+
+enum SymbolType dynamictype_Terminal_AND_Dispatch(  ) {
+    return TERMINAL_SYMBOL;
 }

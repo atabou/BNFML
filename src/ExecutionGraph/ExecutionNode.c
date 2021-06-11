@@ -30,10 +30,10 @@ ExecutionNode* createTerminalExecutionNode( Terminal* term ) {
     node->id = ExecutionID_Generator++;
     node->NodeType = TERMINAL_NODE;
 
-    if( getTerminal_value(term) == NULL  ) {
+    if( term->getValue(term) == NULL  ) {
         node->term = NULL;
     } else {
-        node->term = strdup( getTerminal_value( term ) );
+        node->term = strdup( term->getValue( term ) );
     }
 
     return node;
@@ -52,7 +52,7 @@ ExecutionNode* createNonTerminalExecutionNode( NonTerminal* nterm ) {
 
     node->id = ExecutionID_Generator++;
     node->NodeType = NON_TERMINAL_NODE;
-    node->nterm = strdup( getNonTerminal_name( nterm ) );
+    node->nterm = strdup( nterm->getName(nterm) );
 
     return node;
 

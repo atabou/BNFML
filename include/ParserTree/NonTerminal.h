@@ -13,32 +13,45 @@
     
     #define NON_TERMINAL_H
 
-    #include <stdio.h>
-    #include "Common.h"
-    
+    #include "Symbol.h"
+
     /**
      * \addtogroup NonTerminal
      * @{
      */
+
+    typedef struct NonTerminal NonTerminal;
 
     /**
      * @struct **NonTerminal**
      * @brief struct to define a parsed **NonTerminal** object in BNFML
      * 
      */
-    typedef struct NonTerminal {
+    struct NonTerminal {
 
-        unsigned int id; /**< Global ID of the object. see: idGenerator*/
-        char* name; /**< A string representing the name of a non-terminal.*/
+        Symbol super;
 
-        CommonInterface* fn;
+        /* Fields */
+        char* name;
 
-    } NonTerminal;
+        /* Getters */
+        char* (*getName)( NonTerminal* term );
 
+        /* Inherited */
+        unsigned int (*getID)( NonTerminal* this );
+
+        /* Must Implement */
+        void (*print)( NonTerminal* this );
+        void (*build_Graphviz)( NonTerminal* this, FILE* fp );
+        void (*destruct)( NonTerminal* this );
+        enum SymbolType (*getDynamicType)(  );
+
+
+
+
+    };
 
     NonTerminal* new_NonTerminal( char* name );
-
-    char* getNonTerminal_name( NonTerminal* term );
 
     /** @} */
 

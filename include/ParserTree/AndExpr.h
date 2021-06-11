@@ -15,11 +15,7 @@
 
     #include <stdio.h>
 
-    #include "Terminal.h"
-    #include "NonTerminal.h"
     #include "Symbol.h"
-
-    
 
     /**
      * \addtogroup AndExpression
@@ -47,17 +43,15 @@
         //Methods
         void (*print)(AndExpr* this);
         void (*toGraphviz)(AndExpr* this, FILE* fp);
+        void (*append)( AndExpr* this, Symbol* sym );
 
         // Destructor
         void (*destruct)(AndExpr* this);
         
     };
     
-    AndExpr* new_AndExpr_Terminal( Terminal* term );
-    AndExpr* new_AndExpr_NonTerminal( NonTerminal* nterm );
+    AndExpr* new_AndExpr( Symbol* sym );
 
-    AndExpr* append_ToAndExpr_Terminal( AndExpr* expr, Terminal* term );
-    AndExpr* append_ToAndExpr_NonTerminal( AndExpr* expr, NonTerminal* nterm );
     
     // void apply_ToAndExpr( AndExpr* expr, void (*applyToTerm) (), void (*applyToNTerm) () );
 

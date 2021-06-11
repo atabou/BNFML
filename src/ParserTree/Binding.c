@@ -67,7 +67,7 @@ OrExpr* getBinding_OrExpr( Binding* b ) {
  */
 void freeBinding(Binding* binding) {
 
-    binding->nterm->fn->destruct( binding->nterm );
+    binding->nterm->destruct( binding->nterm );
     free( binding->nterm );
     binding->nterm = NULL;
 
@@ -84,7 +84,7 @@ void freeBinding(Binding* binding) {
  */
 void printBinding( Binding* b ) {
 
-    b->nterm->fn->print( b->nterm );
+    b->nterm->print( b->nterm );
     printf( " ::= " );
     printOrExpr( b->OrExpression );
 
@@ -100,8 +100,8 @@ void build_Graphviz_Binding( Binding* b, FILE* fp ) {
 
     fprintf( fp, "%u [label=\"%s\"];\n", b->id, "Binding" );
 
-    fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", b->id, b->nterm->fn->getID( b->nterm ) );
-    b->nterm->fn->build_Graphviz( b->nterm, fp );
+    fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", b->id, b->nterm->getID( b->nterm ) );
+    b->nterm->build_Graphviz( b->nterm, fp );
 
     fprintf( fp, "%u -> %u [label=\"Or-Expression\"];\n", b->id, getOrExpr_id( b->OrExpression ) );
     build_Graphviz_OrExpr( b->OrExpression, fp );

@@ -12,90 +12,109 @@
 #include <stdlib.h>
 
 #include "ParserTree/NonTerminal.h"
+#include "ParserTree/Symbol.h"
 #include "Common.h"
 
-void build_Graphviz_NonTerminal( void* this, FILE* fp );
-void printNonTerminal( void* this );
-void freeNonTerminal( void* this );
-unsigned int getNonTerminal_id( void* this );
+char* name_Get( NonTerminal* this );
 
-/**
- * @brief Constructor to create a **Non-Terminal** object.
- * 
- * @param name String that represents the name of a **Non-Terminal** object.
- * @return NonTerminal* Pointer to a newly created **Non-Terminal** object.
- */
+unsigned int inherited_idGet( NonTerminal* this );
+
+void print_NonTerminal( NonTerminal* this );
+void print_Dispatch( Symbol* super );
+
+void graphviz_NonTerminal( NonTerminal* this, FILE* fp );
+void graphviz_Dispatch( Symbol* super, FILE* fp );
+
+enum SymbolType dynamictype_NonTerminal_AND_Dispatch(  );
+
+void destruct_NonTerminal( NonTerminal* this );
+void destruct_Dispatch( Symbol* super );
+
 NonTerminal* new_NonTerminal( char* name ) {
 
     printf( "Creating a Non-Terminal expression.\n" );
 
-    NonTerminal* nt = (NonTerminal*) malloc(sizeof(NonTerminal));
+    NonTerminal* nterm = (NonTerminal*) malloc(sizeof(NonTerminal));
 
-    nt->id = ParserID_Generator++;
-    nt->name = name;
+    nterm->super = *new_Symbol();
 
-    nt->fn = (CommonInterface*) malloc( sizeof( CommonInterface ) );
+    nterm->name = name;
 
-    nt->fn->print = printNonTerminal;
-    nt->fn->build_Graphviz = build_Graphviz_NonTerminal;
-    nt->fn->destruct = freeNonTerminal;
-    nt->fn->getID = getNonTerminal_id;
+    // Class methods
+    nterm->getName = name_Get;
+    nterm->getID = inherited_idGet;
+
+    // Implementation of abstract methods
+    nterm->print = print_NonTerminal;
+    nterm->build_Graphviz = graphviz_NonTerminal;
+    nterm->getDynamicType = dynamictype_NonTerminal_AND_Dispatch;
+    nterm->destruct = destruct_NonTerminal;
+
+    // Method dispatch
+    nterm->super.print = print_Dispatch;
+    nterm->super.build_Graphviz = graphviz_Dispatch;
+    nterm->super.getDynamicType = dynamictype_NonTerminal_AND_Dispatch;
 
     printf( "[SUCCESS] Finished creating a Non-Terminal expression.\n" );
 
-    return nt;
+    return nterm;
 
 }
 
-unsigned int getNonTerminal_id( void* this ) {
 
-    NonTerminal* nterm = this;
-    return nterm->id;
+char* name_Get( NonTerminal* this ) {
 
-}
-
-char* getNonTerminal_name( NonTerminal* nterm ) {
-    return nterm->name;
-}
-
-/**
- * @brief Destructor for a **Non-Terminal** object.
- * 
- * @param term A pointer to the **Non-Terminal** object you want to destruct.
- */
-void freeNonTerminal( void* this ) {
-
-    NonTerminal* nterm = this;
-
-    free(nterm->name);
-    nterm->name = NULL;
-
-    free( nterm->fn );
-    nterm->fn = NULL;
-    
-}
-
-/**
- * @brief Prints a string representation of a **Non-Terminal** object.
- * 
- * @param term A pointer to the **Terminal** object you want to print.
- */
-void printNonTerminal( void* this ) {
-
-    NonTerminal* nterm = this;
-    printf( "%s", nterm->name );
+    return this->name;
 
 }
 
-/**
- * @brief Builds a graphviz representation of a **Non-Terminal** object and prints it to a file.
- * 
- * @param term A pointer to a **Terminal** object.
- * @param fp A valid file pointer.
- */
-void build_Graphviz_NonTerminal( void* this, FILE* fp ) {
+unsigned int inherited_idGet( NonTerminal* this ) {
 
-    NonTerminal* nterm = this;
-    fprintf( fp, "%u [label=\"%s\"];\n", nterm->id, nterm->name );
+    return this->super.getID( (Symbol*) this );
 
 }
+
+void print_NonTerminal( NonTerminal* this ) {
+
+    printf( "%s", this->name );
+
+}
+
+void print_Dispatch( Symbol* super ) {
+
+    NonTerminal* this = (NonTerminal*) super;
+    this->print( this );
+
+}
+
+void graphviz_NonTerminal( NonTerminal* this, FILE* fp ) {
+
+    fprintf( fp, "%u [label=\"%s\"];\n", this->getID(this), this->name );
+
+}
+
+void graphviz_Dispatch( Symbol* super, FILE* fp ) {
+
+    NonTerminal* this = (NonTerminal*) super;
+    this->build_Graphviz( this, fp );
+
+}
+
+enum SymbolType dynamictype_NonTerminal_AND_Dispatch( NonTerminal* nterm ) {
+
+    return NON_TERMINAL_SYMBOL;
+
+}
+
+void destruct_NonTerminal( NonTerminal* this ) {
+
+    free(this->name);
+    this->name = NULL;
+
+    this->super.destruct( (Symbol*) this );
+    free( &(this->super) );
+
+
+}
+
+void destruct_Dispatch( Symbol* super );

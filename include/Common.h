@@ -2,14 +2,12 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-    typedef struct CommonInterface {
+    enum SymbolType {
 
-        unsigned int (*getID)( void* this );
-        void (*print)( void* this );
-        void (*build_Graphviz)( void* this, FILE* fp );
-        void (*destruct)( void* this );
+        TERMINAL_SYMBOL,
+        NON_TERMINAL_SYMBOL
 
-    } CommonInterface;
+    };
 
     extern unsigned int ParserID_Generator;
     extern unsigned int ExecutionID_Generator;

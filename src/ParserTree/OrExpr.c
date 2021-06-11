@@ -140,7 +140,9 @@ void build_Graphviz_OrExpr( OrExpr* expr, FILE* fp ) {
     
     for( int i=0; i < expr->n; i++ ) {
 
-        fprintf( fp, "%u -> %u;\n", expr->id, expr->branches[i]->getID( expr->branches[i] ) );
+        AndExpr* e = expr->branches[i];
+
+        fprintf( fp, "%u -> %u;\n", expr->id, e->getID( e ) );
         expr->branches[i]->toGraphviz( expr->branches[i], fp );
 
     }

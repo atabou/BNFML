@@ -63,6 +63,8 @@ ${GEN}/lex.yy.c: bnfml.flex
 	flex --outfile="${GEN}/lex.yy.c" bnfml.flex
 
 
+test: ./test/unit/TestTerminal.c ${PTREE}/Terminal.c ${PTREE}/Symbol.c
+	gcc -Iinclude -o ${EXE}/test ./test/unit/TestTerminal.c ${PTREE}/Terminal.c ${PTREE}/Symbol.c
 
 
 clean:

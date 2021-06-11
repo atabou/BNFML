@@ -162,7 +162,10 @@ Binding* verifyUniquenessOfBindings( BindingList* lst ) {
 
         while( fast != NULL ) {
 
-            if( strcmp( getNonTerminal_name(getBinding_nterm( fast->binding )) , getNonTerminal_name(getBinding_nterm( slow->binding )) ) == 0 ) {
+            NonTerminal* term1 = getBinding_nterm( fast->binding );
+            NonTerminal* term2 = getBinding_nterm( slow->binding );
+
+            if( strcmp( term1->getName(term1), term2->getName(term2) ) == 0 ) {
                 b = slow->binding;
                 break;
             }
@@ -193,7 +196,9 @@ Binding* search_InBindignList( BindingList* lst, char* name ) {
     BindingList* current = lst;
     while( current != NULL ) {
 
-        if( strcmp( getNonTerminal_name(getBinding_nterm( current->binding )), name ) == 0  ) {
+        NonTerminal* term = getBinding_nterm( current->binding );
+
+        if( strcmp( term->getName(term), name ) == 0  ) {
             b = current->binding;
             break;
         }

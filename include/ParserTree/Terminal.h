@@ -14,6 +14,7 @@
     #define TERMINAL_H
 
     #include <stdio.h>
+    #include "Symbol.h"
     #include "Common.h"
 
     /**
@@ -21,25 +22,31 @@
      * @{
      */
     
+    typedef struct Terminal_private Terminal_private;
     typedef struct Terminal Terminal;
 
-    /**
-     * @struct **Terminal**
-     * @brief struct to define a parsed **Terminal** value in BNFML
-     * 
-     */
     struct Terminal {
 
-        unsigned int id; /**< Global ID of the object. see: idGenerator*/
-        char* value; /**< A regular expression representing the values a terminal can take.*/
+        Symbol super;
 
-        CommonInterface* fn;
+        /* Fields */
+        char* value; /**< A regular expression representing the values a terminal can take.*/
+        
+        /* Getters */
+        char* (*getValue)( Terminal* term );
+
+        /* Inherited */
+        unsigned int (*getID)( Terminal* this );
+
+        /* Must Implement */
+        void (*print)( Terminal* this );
+        void (*build_Graphviz)( Terminal* this, FILE* fp );
+        void (*destruct)( Terminal* this );
+        enum SymbolType (*getDynamicType)(  );
 
     };
 
     Terminal* new_Terminal( char* value );
-
-    char* getTerminal_value( Terminal* term );
     
     /** @} */
 

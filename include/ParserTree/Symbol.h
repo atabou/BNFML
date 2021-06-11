@@ -3,41 +3,28 @@
 
     #define SYMBOL_H
 
-    /**
-     * @enum SymbolType
-     * @brief Enum to represent the types a symbol can be.
-     * 
-     */
+    #include <stdio.h>
 
-    #include "Terminal.h"
-    #include "NonTerminal.h"
-
-    enum SymbolType {
-
-        TERMINAL_SYMBOL, /**< Enum value to reprsent a **Terminal** value. */
-        NON_TERMINAL_SYMBOL /**< Enum value to represent a **NonTerminal** value. */
-
-    };
+    #include "Common.h"
 
     typedef struct Symbol Symbol;
 
     struct Symbol {
 
-        enum SymbolType type; /**< Enum **SymbolType** used to determine the type of symbol this object contains */
+        unsigned int id;
 
-        union {
-            NonTerminal* nterm; /**< A pointer to a **NonTerminal** object.*/
-            Terminal* term; /**< A pointer to a **Terminal** object.*/
-        };
+        /* Getters */
+        unsigned int (*getID)( Symbol* id );
 
-        enum SymbolType (*getType)( Symbol* this );
-        Terminal* (*getTerminal)( Symbol* this );
-        NonTerminal* (*getNonTerminal)( Symbol* this );
+        /* Abstract Methods */
+        void (*print)( Symbol* this );
+        void (*build_Graphviz)( Symbol* this, FILE* fp );
+        void (*destruct)( Symbol* this );
+        enum SymbolType (*getDynamicType)(  );
 
     };
     
-    Symbol* new_Symbol_Terminal( Terminal* term );
-    Symbol* new_Symbol_NonTerminal( NonTerminal* nterm );
+    Symbol* new_Symbol( );
     
 
 #endif

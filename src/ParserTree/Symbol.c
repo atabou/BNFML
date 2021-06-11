@@ -1,64 +1,37 @@
 
-#include "ParserTree/Symbol.h"
 #include <stdlib.h>
 
+#include "ParserTree/Symbol.h"
+#include "Common.h"
 
-enum SymbolType getSymbol_type( Symbol* this );
-Terminal* getSymbol_term( Symbol* this );
-NonTerminal* getSymbol_nterm( Symbol* this );
+unsigned int symbolGetID( Symbol* this );
+void symbolDestructor( Symbol* this );
 
+Symbol* new_Symbol( ) {
 
+    printf( "Creating new Symbol.\n" );
 
-Symbol* new_Symbol_Terminal( Terminal* term ) {
+    Symbol* s = (Symbol*) malloc( sizeof(Symbol) );
 
-    printf( "Creating new Terminal symbol.\n" );
+    s->id = ParserID_Generator++;
 
-    Symbol* s = (Symbol*) malloc( sizeof( Symbol ) );
+    s->getID = symbolGetID;
+    s->destruct = symbolDestructor;
 
-    s->type = TERMINAL_SYMBOL;
-    s->term = term;
-
-    s->getType = getSymbol_type;
-    s->getTerminal = getSymbol_term;
-
-    printf( "[Success] Finished creating Terminal symbol.\n" );
+    printf( "[SUCCESS] Finished creating Terminal symbol.\n" );
 
     return s;
 
 }
 
-Symbol* new_Symbol_NonTerminal( NonTerminal* nterm ) {
+unsigned int symbolGetID( Symbol* this ) {
 
-    printf( "Creating new Terminal symbol.\n" );
-
-    Symbol* s = (Symbol*) malloc( sizeof( Symbol ) );
-
-    s->type = NON_TERMINAL_SYMBOL;
-    s->nterm = nterm;
-
-    s->getType = getSymbol_type;
-    s->getNonTerminal = getSymbol_nterm;
-
-    printf( "[Success] Finished creating Terminal symbol.\n" );
-
-    return s;
+    return this->id;
 
 }
 
-enum SymbolType getSymbol_type( Symbol* this ) {
+void symbolDestructor( Symbol* this ) {
 
-    return this->type;
-
-}
-
-Terminal* getSymbol_term( Symbol* this ) {
-
-    return this->term;
-
-}
-
-NonTerminal* getSymbol_nterm( Symbol* this ) {
-
-    return this->nterm;
+    return ;
 
 }
