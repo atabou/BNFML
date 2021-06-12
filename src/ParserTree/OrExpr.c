@@ -16,9 +16,9 @@
 #include "Common.h" 
 
 // Getters
-unsigned int id_Get(OrExpr* this);
-AndExpr** branches_Get( OrExpr* this );
-int length_Get( OrExpr* this );
+unsigned int id_GetOrExpr(OrExpr* this);
+AndExpr** branches_GetOrExpr( OrExpr* this );
+int length_GetOrExpr( OrExpr* this );
 
 //Methods
 void print_OrExpr(OrExpr* this);
@@ -42,9 +42,9 @@ OrExpr* new_OrExpr( AndExpr* expr ) {
     o->n = 1;
 
     // Getters
-    o->getID = id_Get;
-    o->getBranches = branches_Get;
-    o->length = length_Get;
+    o->getID = id_GetOrExpr;
+    o->getBranches = branches_GetOrExpr;
+    o->length = length_GetOrExpr;
 
     o->append = append_OrExpr;
 
@@ -59,15 +59,15 @@ OrExpr* new_OrExpr( AndExpr* expr ) {
 }
 
 // Getters
-unsigned int id_Get(OrExpr* this) {
+unsigned int id_GetOrExpr(OrExpr* this) {
     return this->id;
 }
 
-AndExpr** branches_Get( OrExpr* this ) {
+AndExpr** branches_GetOrExpr( OrExpr* this ) {
     return this->branches;
 }
 
-int length_Get( OrExpr* this ) {
+int length_GetOrExpr( OrExpr* this ) {
     return this->n;
 }
 
