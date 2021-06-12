@@ -46,6 +46,8 @@ BindingList* new_BindingList( Binding* b ) {
     r->search = search_BindingList;
     r->allElementsUnique = allElementsUnique_BindingList;
 
+    r->destruct = destruct_BindingList;
+
     return r;
 
 }
@@ -134,9 +136,9 @@ Binding* allElementsUnique_BindingList( BindingList* this ) {
 
     Binding* b = NULL;
 
-    for( int i=0; i < this->n; i++ ) {
+    for( int i=0; i < this->n - 1; i++ ) {
         
-        for( int j=0; j < this->n; j++ ) {
+        for( int j=i+1; j < this->n; j++ ) {
 
             NonTerminal* term1 = this->branches[i]->getNonTerminal( this->branches[i] );
             NonTerminal* term2 = this->branches[j]->getNonTerminal( this->branches[j] );
