@@ -251,9 +251,9 @@ int appendNewBranch( ExecutionGraph* tree, ExecutionGraph* branch ) {
  */
 void exploreOrExpr( OrExpr* OrExpression, ExecutionGraph* DirectParent, BindingList* lst  ) {
 
-    AndExpr** branches = getOrExpr_branches( OrExpression );
+    AndExpr** branches = OrExpression->getBranches( OrExpression );
 
-    if ( getOrExpr_num_branches( OrExpression ) == 1 ) {
+    if ( OrExpression->length(OrExpression) == 1 ) {
 
         printf( "Starting exploration of AND expression, id: %d\n", branches[0]->getID( branches[0] ) );
         exploreAndExpr( branches[0], DirectParent, lst );
@@ -264,7 +264,7 @@ void exploreOrExpr( OrExpr* OrExpression, ExecutionGraph* DirectParent, BindingL
         ExecutionNode* OrNode = createOrExecutionNode( );
         ExecutionGraph* OrGraph = createExecutionGraph( OrNode, DirectParent );
 
-        for( int i=0; i<getOrExpr_num_branches(OrExpression); i++ ) {
+        for( int i=0; i<OrExpression->length(OrExpression); i++ ) {
 
             printf( "Starting exploration of AND expression, id: %d\n", branches[i]->getID( branches[i] ) );
             exploreAndExpr( branches[i], OrGraph, lst );
@@ -370,9 +370,11 @@ void exploreNonTerminal( NonTerminal* nterm, ExecutionGraph* DirectParent, Bindi
 
     if( RecursiveNode == NULL ) {
 
-        printf( "Starting exploration of OR exprssion, id: %d\n", getOrExpr_id(getBinding_OrExpr(b)) );
+        OrExpr* expr = getBinding_OrExpr(b);
+
+        printf( "Starting exploration of OR exprssion, id: %d\n", expr->getID( expr )  );
         exploreOrExpr( getBinding_OrExpr( b ), NonTerminalGraph, lst );
-        printf( "Starting exploration of OR exprssion, id: %d\n", getOrExpr_id(getBinding_OrExpr(b)) );
+        printf( "Starting exploration of OR exprssion, id: %d\n", expr->getID( expr ) );
 
     } else {
 

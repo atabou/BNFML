@@ -29,7 +29,7 @@
      * @brief struct to define a parsed **AndExpr** value in BNFML
      * 
      */
-    struct AndExpr { // TODO AndExpression does not need to be a linked list.
+    struct AndExpr {
 
         unsigned int id; /**< Global ID of the object. see: idGenerator*/
         Symbol** branches; /**< Array of pointers to **Symbol** objects. */

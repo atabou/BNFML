@@ -82,7 +82,7 @@ binding
     ;
 
 or_expression
-    : or_expression PIPE and_expression         { $$ = append_ToOrExpr_AndExpr( $1, $3 ); } 
+    : or_expression PIPE and_expression         { $1->append($1, $3); $$ = $1; } 
     | and_expression                            { $$ = new_OrExpr( $1 ); } 
     ;
 

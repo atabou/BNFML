@@ -73,7 +73,7 @@ void freeBinding(Binding* binding) {
     free( binding->nterm );
     binding->nterm = NULL;
 
-    freeOrExpr( binding->OrExpression );
+    binding->OrExpression->destruct( binding->OrExpression );
     free( binding->OrExpression );
     binding->OrExpression = NULL;
 
@@ -90,7 +90,7 @@ void printBinding( Binding* b ) {
 
     b->nterm->print( b->nterm );
     printf( " ::= " );
-    printOrExpr( b->OrExpression );
+    b->OrExpression->print( b->OrExpression );
 
 }
 
@@ -107,7 +107,7 @@ void build_Graphviz_Binding( Binding* b, FILE* fp ) {
     fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", b->id, b->nterm->getID( b->nterm ) );
     b->nterm->build_Graphviz( b->nterm, fp );
 
-    fprintf( fp, "%u -> %u [label=\"Or-Expression\"];\n", b->id, getOrExpr_id( b->OrExpression ) );
-    build_Graphviz_OrExpr( b->OrExpression, fp );
+    fprintf( fp, "%u -> %u [label=\"Or-Expression\"];\n", b->id, b->OrExpression->getID( b->OrExpression ) );
+    b->OrExpression->toGraphviz( b->OrExpression, fp );
 
 }

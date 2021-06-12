@@ -22,17 +22,34 @@
      */
 
     typedef struct OrExpr OrExpr;
+
+    /**
+     * @struct **OrExpr**
+     * @brief struct to define a parsed **OrExpr** value in BNFML
+     * 
+     */
+    struct OrExpr {
+
+        unsigned int id; /**< Global ID of the object. see: idGenerator*/
+        AndExpr** branches; /**< An array of pointers to **AndExpr** objects.*/
+        int n; /** An integer representing the number of elements in AndExpression. */
+
+        // Getters
+        unsigned int (*getID)(OrExpr* this);
+        AndExpr** (*getBranches)( OrExpr* this );
+        int (*length)( OrExpr* this );
+        
+        //Methods
+        void (*print)(OrExpr* this);
+        void (*toGraphviz)(OrExpr* this, FILE* fp);
+        void (*append)( OrExpr* this, AndExpr* AndExpression );
+
+        // Destructor
+        void (*destruct)(OrExpr* this);
+
+    };
     
     OrExpr* new_OrExpr( AndExpr* expr );
-    OrExpr* append_ToOrExpr_AndExpr( OrExpr* expr, AndExpr* AndExpression );
-    
-    unsigned int getOrExpr_id( OrExpr* expr );
-    AndExpr** getOrExpr_branches( OrExpr* expr );
-    int getOrExpr_num_branches( OrExpr* expr );
-
-    void freeOrExpr( OrExpr* OrExpression );
-    void printOrExpr( OrExpr* OrExpression );
-    void build_Graphviz_OrExpr( OrExpr* OrExpression, FILE* fp );
 
     /** @} */
 
