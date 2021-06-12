@@ -80,11 +80,17 @@ char* terminalValueGet( Terminal* this ) {
 
 void terminalDestruct( Terminal* this ) {
     
+    printf( "Freeing Terminal with id: %d and value: %s\n", this->getID(this), this->getValue(this) );
+
     free( this->value );
     this->value = NULL;
 
     this->super.destruct( (Symbol*) this );
-    free( &(this->super) );
+
+    // TODO super was created on the heap, verify how it should be dealt with. The following does not work.
+    // free( &(this->super) );
+
+    printf( "Freeing Terminal with id: %d and value: %s\n", this->getID(this), this->getValue(this) );
 
 }
 

@@ -94,19 +94,27 @@ void buildGraphvizExecutionNodeRepresentation( ExecutionNode* node, FILE* fp ) {
 
     if( node->NodeType == TERMINAL_NODE ) {
 
+        printf( "Building Terminal: %s\n", node->term );
         fprintf( fp, "%u [label=\"%s\"];\n", node->id, node->term );
+        printf( "[SUCCESS] Built Terminal: %s\n", node->term );
 
     } else if( node->NodeType == NON_TERMINAL_NODE ) {
 
+        printf( "Building Non-Terminal: %s\n", node->nterm );
         fprintf( fp, "%u [label=\"%s\"];\n", node->id, node->nterm );
+        printf( "[SUCCESS] Building Non-Terminal: %s\n", node->term );
 
     } else if( node->NodeType == AND_NODE ) {
 
+        printf( "Building AND\n");
         fprintf( fp, "%u [label=\"AND\"];\n", node->id);
+        printf( "[SUCCESS] Building AND\n");
 
     } else if( node->NodeType == OR_NODE ) {
 
+        printf( "Building OR\n");
         fprintf( fp, "%u [label=\"OR\"];\n", node->id );
+        printf( "[SUCCESS] Building OR\n");
 
     }
 

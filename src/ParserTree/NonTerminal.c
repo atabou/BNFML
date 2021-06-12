@@ -108,13 +108,18 @@ enum SymbolType dynamictype_NonTerminal_AND_Dispatch( NonTerminal* nterm ) {
 
 void destruct_NonTerminal( NonTerminal* this ) {
 
+    printf( "Freeing Non-Terminal with id: %d and name: %s\n", this->getID(this), this->getName(this) );
+
     free(this->name);
     this->name = NULL;
 
     this->super.destruct( (Symbol*) this );
-    free( &(this->super) );
 
 
+    // TODO super was created on the heap, verify how it should be dealt with. The following does not work.
+    // free( &(this->super) );
+
+    printf( "Freeing Binding with id: %d, and name: %s\n", this->getID(this), this->getName(this) );
 }
 
 void destruct_Dispatch( Symbol* super );

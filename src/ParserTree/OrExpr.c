@@ -15,6 +15,8 @@
 #include "ParserTree/AndExpr.h"
 #include "Common.h"
 
+
+
 /**
  * @struct **OrExpr**
  * @brief struct to define a parsed **OrExpr** value in BNFML
@@ -95,6 +97,8 @@ int getOrExpr_num_branches( OrExpr* expr ) {
  */
 void freeOrExpr(OrExpr* expr) {
 
+    printf( "Freeing OR with id: %d\n", expr->id );
+
     for( int i=0; i<expr->n; i++ ) {
 
         expr->branches[i]->destruct( expr->branches[i] );
@@ -106,6 +110,8 @@ void freeOrExpr(OrExpr* expr) {
     free( expr->branches );
     expr->branches = NULL;
     expr->n = 0;
+
+    printf( "[SUCCESS] Freeing OR with id: %d\n", expr->id );
 
 }
 

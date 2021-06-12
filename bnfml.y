@@ -121,7 +121,7 @@ void doThis( BindingList* lst ) {
     ExecutionGraph* G = buildExecutionGraph( lst );
 
     freeBindingList( lst );
-    free( lst ); 
+    free( lst );
 
     fp = fopen( "log/ExecutionGraph.dot", "w" );
 

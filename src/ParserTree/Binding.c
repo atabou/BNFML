@@ -67,6 +67,8 @@ OrExpr* getBinding_OrExpr( Binding* b ) {
  */
 void freeBinding(Binding* binding) {
 
+    printf( "Freeing Binding with id: %d\n", binding->id );
+
     binding->nterm->destruct( binding->nterm );
     free( binding->nterm );
     binding->nterm = NULL;
@@ -74,6 +76,8 @@ void freeBinding(Binding* binding) {
     freeOrExpr( binding->OrExpression );
     free( binding->OrExpression );
     binding->OrExpression = NULL;
+
+    printf( "[SUCCESS] Freeing Binding with id: %d\n", binding->id );
 
 }
 

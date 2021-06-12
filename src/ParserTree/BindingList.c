@@ -60,6 +60,8 @@ BindingList* append_ToBindingList_Binding( BindingList* lst, Binding* b ) {
  */
 void freeBindingList(BindingList* bindingList) {
 
+    printf( "Freeing Binding List with id: %d\n", bindingList->id );
+
     freeBinding( bindingList->binding );
     free( bindingList->binding );
     bindingList->binding = NULL;
@@ -70,6 +72,8 @@ void freeBindingList(BindingList* bindingList) {
 
     free( bindingList->prevBindings );
     bindingList->prevBindings = NULL;
+
+    printf( "[SUCCESS] Freeing Binding List with id: %d\n", bindingList->id );
 
 }
 

@@ -32,6 +32,6 @@ unsigned int symbolGetID( Symbol* this ) {
 
 void symbolDestructor( Symbol* this ) {
 
-    return ;
+    printf( "[SUCCESS] Freeing Symbol.\n" );
 
 }
