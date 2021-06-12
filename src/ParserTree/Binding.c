@@ -16,26 +16,15 @@
 #include "ParserTree/OrExpr.h"
 #include "Common.h"
 
-/**
- * @struct **Binding**
- * @brief struct to define a parsed **Binding** value in BNFML
- * 
- */
-struct Binding {
+unsigned int id_GetBinding( Binding* bind );
+NonTerminal* nterm_GetBinding( Binding* bind );
+OrExpr* or_GetBinding( Binding* bind );
 
-    unsigned int id; /**< Global ID of the object. see: idGenerator*/
-    NonTerminal* nterm; /**< A pointer to a **NonTerminal** object.*/
-    OrExpr* OrExpression; /**< A pointer to a **OrExpr** object.*/
+void print_Binding( Binding* bind );
+void toGraphviz_Binding( Binding* bind, FILE* fp );
 
-}; 
+void destruct_Binding( Binding* bind );
 
-/**
- * @brief Constructor to create an **Binding** object.
- * 
- * @param nterm A pointer to a **NonTerminal** object.
- * @param OrExpression A pointer to an **OrExpr** object.
- * @return Binding* Pointer to a newly created **Binding** object.
- */
 Binding* new_Binding( NonTerminal* nterm, OrExpr* OrExpression ) {
 
     Binding* b = (Binding*) malloc(sizeof(Binding));
@@ -44,70 +33,73 @@ Binding* new_Binding( NonTerminal* nterm, OrExpr* OrExpression ) {
     b->nterm = nterm;
     b->OrExpression = OrExpression;
 
+    b->getID = id_GetBinding;
+    b->getNonTerminal = nterm_GetBinding;
+    b->getOrExpr = or_GetBinding;
+
+    b->print = print_Binding;
+    b->toGraphviz = toGraphviz_Binding;
+
+    b->destruct = destruct_Binding;
+
     return b; 
 
 }
 
-unsigned int getBinding_id( Binding* b ) {
-    return b->id;
+unsigned int id_GetBinding( Binding* this ) {
+    return this->id;
 }
 
-NonTerminal* getBinding_nterm( Binding* b ) {
-    return b->nterm;
+NonTerminal* nterm_GetBinding( Binding* this ) {
+    return this->nterm;
 }
 
-OrExpr* getBinding_OrExpr( Binding* b ) {
-    return b->OrExpression;
+OrExpr* or_GetBinding( Binding* this ) {
+    return this->OrExpression;
 }
 
-/**
- * @brief Destructor for a **Binding** object.
- * 
- * @param binding A pointer to the **Binding** object you want to destruct.
- */
-void freeBinding(Binding* binding) {
+void print_Binding( Binding* this ) {
+    
+    NonTerminal* nterm = this->getNonTerminal( this );
+    nterm->print( nterm );
 
-    printf( "Freeing Binding with id: %d\n", binding->id );
-
-    binding->nterm->destruct( binding->nterm );
-    free( binding->nterm );
-    binding->nterm = NULL;
-
-    binding->OrExpression->destruct( binding->OrExpression );
-    free( binding->OrExpression );
-    binding->OrExpression = NULL;
-
-    printf( "[SUCCESS] Freeing Binding with id: %d\n", binding->id );
-
-}
-
-/**
- * @brief Prints a string representation of a **Binding** object.
- * 
- * @param b A pointer to the **Binding** object you want to print.
- */
-void printBinding( Binding* b ) {
-
-    b->nterm->print( b->nterm );
     printf( " ::= " );
-    b->OrExpression->print( b->OrExpression );
+
+    OrExpr* expr = this->getOrExpr( this );
+    expr->print( expr );
 
 }
 
-/**
- * @brief Builds a graphviz representation of a **Binding** object and prints it to a file.
- * 
- * @param b A pointer to an **Binding** object.
- * @param fp A valid file pointer.
- */
-void build_Graphviz_Binding( Binding* b, FILE* fp ) {
+void toGraphviz_Binding( Binding* this, FILE* fp ) {
 
-    fprintf( fp, "%u [label=\"%s\"];\n", b->id, "Binding" );
+    fprintf( fp, "%u [label=\"%s\"];\n", this->getID(this), "Binding" );
 
-    fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", b->id, b->nterm->getID( b->nterm ) );
-    b->nterm->build_Graphviz( b->nterm, fp );
+    NonTerminal* nterm = this->getNonTerminal( this );
+    fprintf( fp, "%u -> %u [label=\"Non-Terminal\"];\n", this->getID(this), nterm->getID(nterm) );
+    nterm->build_Graphviz( nterm, fp );
 
-    fprintf( fp, "%u -> %u [label=\"Or-Expression\"];\n", b->id, b->OrExpression->getID( b->OrExpression ) );
-    b->OrExpression->toGraphviz( b->OrExpression, fp );
+    OrExpr* expr = this->getOrExpr( this );
+    fprintf( fp, "%u -> %u [label=\"Or-Expression\"];\n", this->getID(this), expr->getID( expr ) );
+    expr->toGraphviz( expr, fp );
+
+}
+
+void destruct_Binding(Binding* this) {
+
+    printf( "Freeing Binding with id: %d\n", this->getID(this) );
+
+    NonTerminal* nterm = this->getNonTerminal(this);
+    nterm->destruct( nterm );
+    free( nterm );
+
+    this->nterm = NULL;
+
+    OrExpr* expr = this->OrExpression;
+    expr->destruct( expr );
+    free( expr );
+
+    this->OrExpression = NULL;
+
+    printf( "[SUCCESS] Freeing Binding with id: %d\n", this->getID(this) );
 
 }

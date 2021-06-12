@@ -65,9 +65,8 @@ ExecutionGraph* buildExecutionGraph( BindingList* lst ) {
 
     if( unique != NULL ) {
 
-        char* nterm = (getBinding_nterm( unique ))->getName( getBinding_nterm( unique ) );
-
-        printf( "\n[Error] Non-Terminal: %s, has two assignments.\n", nterm );
+        NonTerminal* nterm = unique->getNonTerminal(unique);
+        printf( "\n[Error] Non-Terminal: %s, has two assignments.\n", nterm->getName(nterm) );
         exit(-1);
     
     } else {
@@ -85,23 +84,17 @@ ExecutionGraph* buildExecutionGraph( BindingList* lst ) {
     
     } else {
     
-        printf( "%s\n", (getBinding_nterm(start))->getName( getBinding_nterm(start) ) );
+        NonTerminal* nterm = start->getNonTerminal( start );
+        printf( "%s\n", nterm->getName(nterm) );
         printf( "[SUCCESS] Starting Non-Terminal <bnf> found.\n" );
     
     }
 
-    ExecutionNode* NonTerminalNode = createNonTerminalExecutionNode( getBinding_nterm(start) );
-
-    printf( "[SUCCESS] Initialised <bnf> Non-Terminal node.\n" );
-
+    ExecutionNode* NonTerminalNode = createNonTerminalExecutionNode( start->getNonTerminal(start) );
     ExecutionGraph* G = createExecutionGraph( NonTerminalNode, NULL );
-
-    printf( "[SUCCESS] Successfully initialised the execution graph.\n" );
-
-    exploreOrExpr( getBinding_OrExpr( start ), G, lst );
+    exploreOrExpr( start->getOrExpr(start), G, lst );
 
     printf( "[SUCCESS] Finished exploring the bindings.\n" );
-
     printf( "[SUCCESS] Successfully finished building the execution tree.\n" );
 
     return G;
@@ -370,15 +363,15 @@ void exploreNonTerminal( NonTerminal* nterm, ExecutionGraph* DirectParent, Bindi
 
     if( RecursiveNode == NULL ) {
 
-        OrExpr* expr = getBinding_OrExpr(b);
+        OrExpr* expr = b->getOrExpr(b);
 
-        printf( "Starting exploration of OR exprssion, id: %d\n", expr->getID( expr )  );
-        exploreOrExpr( getBinding_OrExpr( b ), NonTerminalGraph, lst );
-        printf( "Starting exploration of OR exprssion, id: %d\n", expr->getID( expr ) );
+        printf( "Starting exploration of OR exprssion, id: %d\n", expr->getID(expr)  );
+        exploreOrExpr( expr, NonTerminalGraph, lst );
+        printf( "Starting exploration of OR exprssion, id: %d\n", expr->getID(expr) );
 
     } else {
 
-        NonTerminal* rec = getBinding_nterm(b);
+        NonTerminal* rec = b->getNonTerminal(b);
 
         printf( "Found a recursive call at Non-Terminal: %s, from id: %d to id: %d\n", nterm->getName(nterm), nterm->getID(nterm), rec->getID( rec ) );
         appendNewBranch( NonTerminalGraph, RecursiveNode );

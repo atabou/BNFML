@@ -58,22 +58,22 @@ BindingList* append_ToBindingList_Binding( BindingList* lst, Binding* b ) {
  * 
  * @param BindingList A pointer to the **BindingList** object you want to destruct.
  */
-void freeBindingList(BindingList* bindingList) {
+void freeBindingList(BindingList* this) {
 
-    printf( "Freeing Binding List with id: %d\n", bindingList->id );
+    printf( "Freeing Binding List with id: %d\n", this->id );
 
-    freeBinding( bindingList->binding );
-    free( bindingList->binding );
-    bindingList->binding = NULL;
+    this->binding->destruct( this->binding );
+    free( this->binding );
+    this->binding = NULL;
 
-    if( bindingList->prevBindings != NULL ) {
-        freeBindingList( bindingList->prevBindings );
+    if( this->prevBindings != NULL ) {
+        freeBindingList( this->prevBindings );
     }
 
-    free( bindingList->prevBindings );
-    bindingList->prevBindings = NULL;
+    free( this->prevBindings );
+    this->prevBindings = NULL;
 
-    printf( "[SUCCESS] Freeing Binding List with id: %d\n", bindingList->id );
+    printf( "[SUCCESS] Freeing Binding List with id: %d\n", this->id );
 
 }
 
@@ -82,13 +82,13 @@ void freeBindingList(BindingList* bindingList) {
  * 
  * @param lst A pointer to the **BindingList** object you want to print.
  */
-void printBindingListElements( BindingList* lst ) {
+void printBindingListElements( BindingList* this ) {
 
-    printBinding( lst->binding );
+    this->binding->print( this->binding );
 
-    if( lst->prevBindings != NULL ) {
+    if( this->prevBindings != NULL ) {
         printf("\n");
-        printBindingListElements(lst->prevBindings);
+        printBindingListElements(this->prevBindings);
     }
 
 }
@@ -125,13 +125,14 @@ void printBindingList( BindingList* lst ) {
  * @param fp A valid file pointer.
  * @param id The id of the "top level" **BindingList**. 
  */
-void buildBindingListArrows( BindingList* lst, FILE* fp, unsigned int id ) {
+void buildBindingListArrows( BindingList* this, FILE* fp, unsigned int id ) {
 
-    fprintf( fp, "%u -> %u;\n", id, getBinding_id(lst->binding) );
-    build_Graphviz_Binding( lst->binding, fp );
+    Binding* bind = this->binding;
+    fprintf( fp, "%u -> %u;\n", id, bind->getID( bind ) );
+    bind->toGraphviz(bind, fp);
 
-    if( lst->prevBindings != NULL ) {
-        buildBindingListArrows( lst->prevBindings, fp, id );
+    if( this->prevBindings != NULL ) {
+        buildBindingListArrows( this->prevBindings, fp, id );
     }
 
 }
@@ -166,12 +167,14 @@ Binding* verifyUniquenessOfBindings( BindingList* lst ) {
 
         while( fast != NULL ) {
 
-            NonTerminal* term1 = getBinding_nterm( fast->binding );
-            NonTerminal* term2 = getBinding_nterm( slow->binding );
+            NonTerminal* term1 = fast->binding->getNonTerminal( fast->binding );
+            NonTerminal* term2 = slow->binding->getNonTerminal( slow->binding );
 
             if( strcmp( term1->getName(term1), term2->getName(term2) ) == 0 ) {
+
                 b = slow->binding;
                 break;
+
             }
 
             fast = fast->prevBindings;
@@ -200,7 +203,7 @@ Binding* search_InBindignList( BindingList* lst, char* name ) {
     BindingList* current = lst;
     while( current != NULL ) {
 
-        NonTerminal* term = getBinding_nterm( current->binding );
+        NonTerminal* term = current->binding->getNonTerminal( current->binding );
 
         if( strcmp( term->getName(term), name ) == 0  ) {
             b = current->binding;
