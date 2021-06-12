@@ -73,7 +73,7 @@ bnf
     ;
 
 binding_list
-    : binding_list NL binding                   { $$ = append_ToBindingList_Binding($1, $3); }
+    : binding_list NL binding                   { $1->append($1, $3); $$ = $1; }
     | binding                                   { $$ = new_BindingList( $1 ); }
     ;
 
@@ -108,19 +108,19 @@ terminal
 
 void doThis( BindingList* lst ) {
 
-    printBindingList( lst );
+    lst->print(lst);
 
     FILE* fp = fopen( "log/ParseTree.dot", "w" );
     
     fprintf( fp, "digraph tree {\n" );
-    build_Graphviz_BindingList( lst, fp );
+    lst->toGraphviz( lst, fp );
     fprintf( fp, "}\n" );
 
     fclose(fp);
 
     ExecutionGraph* G = buildExecutionGraph( lst );
 
-    freeBindingList( lst );
+    lst->destruct(lst);
     free( lst );
 
     fp = fopen( "log/ExecutionGraph.dot", "w" );

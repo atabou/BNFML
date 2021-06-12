@@ -16,89 +16,64 @@
 #include "ParserTree/Binding.h"
 #include "Common.h"
 
-/**
- * @brief Constructor to create a **Binding** object.
- * 
- * @param b A pointer to a **Binding** object.
- * @return BindingList* Pointer to a newly created **BindingList** object.
- */
+unsigned int id_GetBindingList(BindingList* this);
+
+void append_BindingList(BindingList* this, Binding* bind);
+void print_BindingList(BindingList* this);
+void toGraphviz_BindingList(BindingList* this, FILE* fp);
+
+Binding* search_BindingList( BindingList* this, char* nterm_name );
+Binding* allElementsUnique_BindingList( BindingList* this );
+
+void destruct_BindingList(BindingList* this);
+
 BindingList* new_BindingList( Binding* b ) {
 
     BindingList* r = (BindingList*) malloc( sizeof(BindingList) );
     
     r->id = ParserID_Generator++;
-    r->prevBindings = NULL;
-    r->binding = b;
-
-    return r;
-
-}
-
-/**
- * @brief Constructor to append a new **Binding** to an existing **BindingList** object.
- * 
- * @param lst A pointer to an existing **BindingList** object.
- * @param b A pointer to a **Binding** object.
- * @return BindingList* Pointer to a newly created **BindingList** object.
- */
-BindingList* append_ToBindingList_Binding( BindingList* lst, Binding* b ) {
-
-    BindingList* r = (BindingList*) malloc( sizeof(BindingList) );
-
-    r->id = ParserID_Generator++;
-    r->prevBindings = lst;
-    r->binding = b;
     
+    r->branches = (Binding**) malloc( sizeof(Binding*) );
+    r->branches[0] = b;
+    r->n = 1;
+
+    r->getID = id_GetBindingList;
+
+    r->append = append_BindingList;
+    r->print = print_BindingList;
+    r->toGraphviz = toGraphviz_BindingList;
+
+    r->search = search_BindingList;
+    r->allElementsUnique = allElementsUnique_BindingList;
+
     return r;
 
 }
 
-/**
- * @brief Destructor for a **BindingList** object.
- * 
- * @param BindingList A pointer to the **BindingList** object you want to destruct.
- */
-void freeBindingList(BindingList* this) {
+unsigned int id_GetBindingList(BindingList* this) {
 
-    printf( "Freeing Binding List with id: %d\n", this->id );
-
-    this->binding->destruct( this->binding );
-    free( this->binding );
-    this->binding = NULL;
-
-    if( this->prevBindings != NULL ) {
-        freeBindingList( this->prevBindings );
-    }
-
-    free( this->prevBindings );
-    this->prevBindings = NULL;
-
-    printf( "[SUCCESS] Freeing Binding List with id: %d\n", this->id );
+    return this->id;
 
 }
 
-/**
- * @brief Internal function to print a string representation of a **BindingList** object.
- * 
- * @param lst A pointer to the **BindingList** object you want to print.
- */
-void printBindingListElements( BindingList* this ) {
+void append_BindingList(BindingList* this, Binding* bind) {
 
-    this->binding->print( this->binding );
+    Binding** lst = (Binding**) malloc( sizeof(Binding*) * (this->n + 1) );
 
-    if( this->prevBindings != NULL ) {
-        printf("\n");
-        printBindingListElements(this->prevBindings);
+    for( int i=1; i<=this->n; i++ ) {
+        lst[i] = this->branches[i-1];
     }
+
+    lst[0] = bind;
+
+    free( this->branches );
+    
+    this->branches = lst;
+    this->n = this->n + 1;
 
 }
 
-/**
- * @brief Prints a formatted string representation of a **BindingList** object.
- * 
- * @param lst A pointer to the **BindingList** object you want to print.
- */
-void printBindingList( BindingList* lst ) {
+void print_BindingList(BindingList* this) {
 
     printf( "\n----------------------------------------\n\n" );
 
@@ -107,113 +82,96 @@ void printBindingList( BindingList* lst ) {
     
     printf("\n");
 
-    printBindingListElements( lst );
+    for( int i=0; i < this->n; i++ ) {
+        
+        this->branches[i]->print( this->branches[i] );
+        printf("\n");
 
-    printf("\n");
+    }
+
     printf("\nEND\n");
 
     printf( "\n----------------------------------------\n\n" );
 
-    
-
 }
 
-/**
- * @brief Internal function to build a graphiz representation of the dependencies of a **BindingList**. (Used by **buildBindingListNode**)
- * 
- * @param lst A pointer to an **BindingList** object.
- * @param fp A valid file pointer.
- * @param id The id of the "top level" **BindingList**. 
- */
-void buildBindingListArrows( BindingList* this, FILE* fp, unsigned int id ) {
+void toGraphviz_BindingList(BindingList* this, FILE* fp) {
 
-    Binding* bind = this->binding;
-    fprintf( fp, "%u -> %u;\n", id, bind->getID( bind ) );
-    bind->toGraphviz(bind, fp);
+    fprintf( fp, "%u [label=\"%s\"];\n", this->getID(this), "Binding List" );
 
-    if( this->prevBindings != NULL ) {
-        buildBindingListArrows( this->prevBindings, fp, id );
-    }
+    for( int i=0; i < this->n; i++ ) {
 
-}
-
-/**
- * @brief Builds a graphviz representation of a **BindingList** object and prints it to a file.
- * 
- * @param lst A pointer to an **BindingList** object.
- * @param fp A valid file pointer.
- */
-void build_Graphviz_BindingList( BindingList* lst, FILE* fp ) {
-
-    fprintf( fp, "%u [label=\"%s\"];\n", lst->id, "Binding List" );
-    buildBindingListArrows( lst, fp, lst->id );
-
-}
-
-/**
- * @brief Verifies that a **BindingList** has no **Binding** with the same **NonTerminal** value.
- * 
- * @param lst A pointer to a **BindingList**
- * @return Binding* A pointe The first duplicate Binding  
- */
-Binding* verifyUniquenessOfBindings( BindingList* lst ) {
-
-    Binding* b = NULL;
-
-    BindingList* slow = lst;
-    while( slow != NULL ) {
-
-        BindingList* fast = slow->prevBindings;
-
-        while( fast != NULL ) {
-
-            NonTerminal* term1 = fast->binding->getNonTerminal( fast->binding );
-            NonTerminal* term2 = slow->binding->getNonTerminal( slow->binding );
-
-            if( strcmp( term1->getName(term1), term2->getName(term2) ) == 0 ) {
-
-                b = slow->binding;
-                break;
-
-            }
-
-            fast = fast->prevBindings;
-
-        }
-
-        slow = slow->prevBindings;
+        Binding* bind = this->branches[i];
+        fprintf( fp, "%u -> %u;\n", this->getID(this), bind->getID( bind ) );
+        bind->toGraphviz(bind, fp);
 
     }
 
 }
 
-
-/**
- * @brief Searches through a **BindingList** for a **Binding** with a specified **NonTerminal** value.
- * 
- * @param lst A pointer to a **BindingList**.
- * @param nterm A string representing the value of the **NonTerminal** to search for.
- * 
- * @return Binding* A pointer to the binding containing the **NonTerminal** we searched for.
- */
-Binding* search_InBindignList( BindingList* lst, char* name ) {
+Binding* search_BindingList( BindingList* this, char* look_for ) {
 
     Binding* b = NULL;
 
-    BindingList* current = lst;
-    while( current != NULL ) {
+    for( int i=0; i < this->n; i++ ) {
 
-        NonTerminal* term = current->binding->getNonTerminal( current->binding );
+        NonTerminal* nterm = this->branches[i]->getNonTerminal( this->branches[i] );
 
-        if( strcmp( term->getName(term), name ) == 0  ) {
-            b = current->binding;
+        if( strcmp( nterm->getName(nterm), look_for ) == 0 ) {
+
+            b = this->branches[i];
             break;
-        }
 
-        current = current->prevBindings;
+        }
 
     }
 
     return b;
+
+}
+
+Binding* allElementsUnique_BindingList( BindingList* this ) {
+
+    Binding* b = NULL;
+
+    for( int i=0; i < this->n; i++ ) {
+        
+        for( int j=0; j < this->n; j++ ) {
+
+            NonTerminal* term1 = this->branches[i]->getNonTerminal( this->branches[i] );
+            NonTerminal* term2 = this->branches[j]->getNonTerminal( this->branches[j] );
+
+            if( strcmp( term1->getName(term1), term2->getName(term2) ) == 0 ) {
+
+                b = this->branches[j];
+                break;
+
+            }
+
+        }
+
+    }
+
+    return b;
+
+
+}
+
+void destruct_BindingList(BindingList* this) {
+
+    printf( "Freeing Binding List with id: %d\n", this->getID(this) );
+
+    for( int i=0; i<this->n; i++ ) {
+        
+        this->branches[i]->destruct( this->branches[i] );
+        free( this->branches[i] );
+        this->branches[i] = NULL;
+
+    }
+
+    free( this->branches );
+    this->branches = NULL;
+
+    printf( "[SUCCESS] Freeing Binding List with id: %d\n", this->getID(this) );
 
 }

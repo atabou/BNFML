@@ -61,7 +61,7 @@ struct ExecutionGraph {
  */
 ExecutionGraph* buildExecutionGraph( BindingList* lst ) {
 
-    Binding* unique = verifyUniquenessOfBindings( lst );
+    Binding* unique = lst->allElementsUnique( lst );
 
     if( unique != NULL ) {
 
@@ -75,7 +75,7 @@ ExecutionGraph* buildExecutionGraph( BindingList* lst ) {
     
     }
 
-    Binding* start = search_InBindignList( lst, "<bnf>" );
+    Binding* start = lst->search( lst, "<bnf>" );
 
     if( start == NULL ) {
     
@@ -347,7 +347,7 @@ void exploreAndExpr( AndExpr* expr, ExecutionGraph* DirectParent, BindingList* l
  */
 void exploreNonTerminal( NonTerminal* nterm, ExecutionGraph* DirectParent, BindingList* lst ) {
 
-    Binding* b = search_InBindignList( lst, nterm->getName(nterm) );
+    Binding* b = lst->search( lst, nterm->getName(nterm) );
 
     if( b == NULL ) {
 

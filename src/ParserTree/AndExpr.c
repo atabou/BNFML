@@ -86,8 +86,6 @@ int length_Get( AndExpr* this ) {
 //Methods
 void print_AndExpr(AndExpr* this) {
 
-    printf( "Freeing AND with id: %d\n", this->getID(this) );
-
     for( int i=0; i < this->n; i++ ) {
 
         this->branches[i]->print( this->branches[i] );
@@ -97,8 +95,6 @@ void print_AndExpr(AndExpr* this) {
         
 
     }
-
-    printf( "[SUCCESS] Freeing AND with id: %d\n", this->getID(this) );
 
 }
 

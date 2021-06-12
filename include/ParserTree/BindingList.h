@@ -32,21 +32,24 @@
     struct BindingList {
 
         unsigned int id; /**< Global ID of the object. see: idGenerator*/
-        BindingList* prevBindings; /**< A pointer to a **BindingList** object.*/
-        Binding* binding; /**< A pointer to a **Binding** object.*/
+        Binding** branches;
+        int n;
+        
+        unsigned int (*getID)(BindingList* this);
+        
+        void (*append)(BindingList* this, Binding* bind);
+        void (*print)(BindingList* this);
+        void (*toGraphviz)(BindingList* this, FILE* fp);
+
+        Binding* (*search)( BindingList* this, char* nterm_name );
+        Binding* (*allElementsUnique)( BindingList* this );
+
+        void (*destruct)(BindingList* this);
+
 
     }; 
     
     BindingList* new_BindingList( Binding* b );
-    BindingList* append_ToBindingList_Binding( BindingList* lst, Binding* b );
-    
-    void printBindingList( BindingList* lst );
-    void build_Graphviz_BindingList( BindingList* lst, FILE* fp );
-
-    Binding* verifyUniquenessOfBindings( BindingList* lst );
-    Binding* search_InBindignList( BindingList* lst, char* nterm );
-
-    void freeBindingList( BindingList* bindingList );
     
 
     /** @} */
