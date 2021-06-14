@@ -5,7 +5,7 @@
 
 #include "Common.h"
 #include "ParserTree.h"
-#include "ExecutionGraph.h"
+#include "ExecutionGraph/ExecutionGraph.h"
 
 extern FILE *yyin;
 FILE* outFile;
@@ -126,6 +126,7 @@ void doThis( BindingList* lst ) {
     fp = fopen( "log/ExecutionGraph.dot", "w" );
 
     fprintf( fp, "digraph tree {\n" );
+    fprintf( fp, "ordering=out;\n" );
     buildGraphvizExecutionGraphRepresentation( G, fp );
     fprintf( fp, "}\n" );
 

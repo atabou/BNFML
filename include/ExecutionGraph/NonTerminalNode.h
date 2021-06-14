@@ -9,19 +9,21 @@
 
     struct NonTerminalNode {
 
-        ExecutionNode node;
+        ExecutionNode super;
 
         char* value;
 
         unsigned int (*getID)( NonTerminalNode* this );
+        char* (*getValue)( NonTerminalNode* this );
 
-        void (*toGraphviz)( NonTerminalNode* this );
+        void (*toGraphviz)( NonTerminalNode* this, FILE* fp );
         void (*destruct)( NonTerminalNode* this );
+        enum NodeType (*getDynamicType)( );
 
 
     };
 
-    ExecutionNode* new_NonTerminalNode( char* value );
+    NonTerminalNode* new_NonTerminalNode( char* value );
 
 
 #endif

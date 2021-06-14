@@ -15,13 +15,14 @@
 
         unsigned int (*getID)( TerminalNode* this );
 
-        void (*toGraphviz)( TerminalNode* this );
+        void (*toGraphviz)( TerminalNode* this, FILE* fp );
         void (*destruct)( TerminalNode* this );
+        enum NodeType (*getDynamicType)( );
 
 
     };
 
-    ExecutionNode* new_TerminalNode( char* value );
+    TerminalNode* new_TerminalNode( char* value );
 
 
 #endif

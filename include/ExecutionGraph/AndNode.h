@@ -10,16 +10,17 @@
 
     struct AndNode {
 
-        ExecutionNode node;
+        ExecutionNode super;
 
         unsigned int (*getID)( AndNode* this );
 
-        void (*toGraphviz)( AndNode* this );
+        void (*toGraphviz)( AndNode* this, FILE* fp );
         void (*destruct)( AndNode* this );
+        enum NodeType (*getDynamicType)( );
 
 
     };
 
-    ExecutionNode* new_AndNode(  );
+    AndNode* new_AndNode(  );
 
 #endif

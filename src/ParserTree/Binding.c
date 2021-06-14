@@ -86,8 +86,6 @@ void toGraphviz_Binding( Binding* this, FILE* fp ) {
 
 void destruct_Binding(Binding* this) {
 
-    printf( "Freeing Binding with id: %d\n", this->getID(this) );
-
     NonTerminal* nterm = this->getNonTerminal(this);
     nterm->destruct( nterm );
     free( nterm );
@@ -99,7 +97,5 @@ void destruct_Binding(Binding* this) {
     free( expr );
 
     this->OrExpression = NULL;
-
-    printf( "[SUCCESS] Freeing Binding with id: %d\n", this->getID(this) );
 
 }

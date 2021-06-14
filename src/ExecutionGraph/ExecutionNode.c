@@ -1,140 +1,27 @@
 
-/**
- * 
- * @file ExecutionNode.c
- * @author Andre Tabourian
- * @version 0.0.1
- * @date 6 Jun 2021
- * @brief Implementation file for the functions related to the **ExecutionNode** struct.
- * @bug No known bugs.
- */
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <stdio.h>
 
-#include "ExecutionGraph.h"
-#include "ParserTree.h"
+#include "ExecutionGraph/ExecutionNode.h"
 #include "Common.h"
 
-/**
- * @brief Constructor to create an **ExecutionNode** object for a Terminal node.
- * 
- * @param term A pointer to a **Terminal** Object.
- * @return ExecutionNode* A pointer to a newly created **ExecutionNode** object.
- */
-ExecutionNode* createTerminalExecutionNode( Terminal* term ) {
+unsigned int id_GetExecutionNode( ExecutionNode* this );
+
+ExecutionNode* new_ExecutionNode(  ) {
 
     ExecutionNode* node = (ExecutionNode*) malloc( sizeof(ExecutionNode) );
 
     node->id = ExecutionID_Generator++;
-    node->NodeType = TERMINAL_NODE;
 
-    if( term->getValue(term) == NULL  ) {
-        node->term = NULL;
-    } else {
-        node->term = strdup( term->getValue( term ) );
-    }
+    node->getID = id_GetExecutionNode;
 
     return node;
 
 }
 
-/**
- * @brief Constructor to create an **ExecutionNode** object for a Non-Terminal Node.
- * 
- * @param nterm A pointer to a **NonTerminal** Object.
- * @return ExecutionNode* A pointer to a newly created **ExecutionNode** object.
- */
-ExecutionNode* createNonTerminalExecutionNode( NonTerminal* nterm ) {
+unsigned int id_GetExecutionNode( ExecutionNode* this ) {
 
-    ExecutionNode* node = (ExecutionNode*) malloc( sizeof(ExecutionNode) );
-
-    node->id = ExecutionID_Generator++;
-    node->NodeType = NON_TERMINAL_NODE;
-    node->nterm = strdup( nterm->getName(nterm) );
-
-    return node;
+    return this->id;
 
 }
-
-/**
- * @brief Constructor to create an **ExecutionNode** object for an OR node.
- * 
- * @return ExecutionNode* A pointer to a newly created **ExecutionNode** object.
- */
-ExecutionNode* createAndExecutionNode( ) {
-
-    ExecutionNode* node = (ExecutionNode*) malloc( sizeof(ExecutionNode) );
-
-    node->id = ExecutionID_Generator++;
-    node->NodeType = AND_NODE;
-    
-    return node;
-
-}
-
-/**
- * @brief Constructor to create an **ExecutionNode** object for an AND node.
- * 
- * @return ExecutionNode* A pointer to a newly created **ExecutionNode** object.
- */
-ExecutionNode* createOrExecutionNode( ) {
-
-    ExecutionNode* node = (ExecutionNode*) malloc( sizeof(ExecutionNode) );
-
-    node->id = ExecutionID_Generator++;
-    node->NodeType = OR_NODE;
-    
-    return node;
-
-}
-
-void buildGraphvizExecutionNodeRepresentation( ExecutionNode* node, FILE* fp ) {
-
-    if( node->NodeType == TERMINAL_NODE ) {
-
-        printf( "Building Terminal: %s\n", node->term );
-        fprintf( fp, "%u [label=\"%s\"];\n", node->id, node->term );
-        printf( "[SUCCESS] Built Terminal: %s\n", node->term );
-
-    } else if( node->NodeType == NON_TERMINAL_NODE ) {
-
-        printf( "Building Non-Terminal: %s\n", node->nterm );
-        fprintf( fp, "%u [label=\"%s\"];\n", node->id, node->nterm );
-        printf( "[SUCCESS] Building Non-Terminal: %s\n", node->term );
-
-    } else if( node->NodeType == AND_NODE ) {
-
-        printf( "Building AND\n");
-        fprintf( fp, "%u [label=\"AND\"];\n", node->id);
-        printf( "[SUCCESS] Building AND\n");
-
-    } else if( node->NodeType == OR_NODE ) {
-
-        printf( "Building OR\n");
-        fprintf( fp, "%u [label=\"OR\"];\n", node->id );
-        printf( "[SUCCESS] Building OR\n");
-
-    }
-
-}
-
-/**
- * @brief Destructor for an **ExecutionNode** object.
- * 
- * @param node A pointer to the **ExecutionNode** object you want to destruct.
- */
-void freeExecutionNode(ExecutionNode* node) {
-
-    if( node->NodeType == NON_TERMINAL_NODE ) {
-        free( node->nterm );
-        node->nterm = NULL;
-    } else if ( node->NodeType == TERMINAL_NODE ) {
-        free( node->term );
-        node->nterm = NULL;
-    }
-
-}
-    
-

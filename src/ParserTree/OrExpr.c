@@ -122,8 +122,6 @@ void append_OrExpr( OrExpr* this, AndExpr* AndExpression ) {
 // Destructor
 void destruct_OrExpr(OrExpr* this) {
 
-    printf( "Freeing OR with id: %d\n", this->getID(this) );
-
     for( int i=0; i<this->length(this); i++ ) {
 
         this->getBranches(this)[i]->destruct( this->getBranches(this)[i] );
@@ -135,7 +133,5 @@ void destruct_OrExpr(OrExpr* this) {
     free( this->getBranches(this) );
     this->branches = NULL;
     this->n = 0;
-
-    printf( "[SUCCESS] Freeing OR with id: %d\n", this->getID(this) );
 
 }

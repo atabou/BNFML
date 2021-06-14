@@ -11,16 +11,17 @@
 
     struct OrNode {
 
-        ExecutionNode node;
+        ExecutionNode super;
 
         unsigned int (*getID)( OrNode* this );
 
-        void (*toGraphviz)( OrNode* this );
+        void (*toGraphviz)( OrNode* this, FILE* fp );
         void (*destruct)( OrNode* this );
+        enum NodeType (*getDynamicType)( );
 
 
     };
 
-    ExecutionNode* new_OrNode(  );
+    OrNode* new_OrNode(  );
 
 #endif

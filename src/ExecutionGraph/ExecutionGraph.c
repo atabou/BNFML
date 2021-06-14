@@ -13,8 +13,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ExecutionGraph.h"
+
 #include "ParserTree.h"
+
+#include "ExecutionGraph/ExecutionGraph.h"
+
+#include "ExecutionGraph/ExecutionNode.h"
+#include "ExecutionGraph/TerminalNode.h"
+#include "ExecutionGraph/NonTerminalNode.h"
+#include "ExecutionGraph/AndNode.h"
+#include "ExecutionGraph/OrNode.h"
 
 
 ExecutionGraph* createExecutionGraph( ExecutionNode* node, ExecutionGraph* DirectParent );
@@ -85,12 +93,11 @@ ExecutionGraph* buildExecutionGraph( BindingList* lst ) {
     } else {
     
         NonTerminal* nterm = start->getNonTerminal( start );
-        printf( "%s\n", nterm->getName(nterm) );
         printf( "[SUCCESS] Starting Non-Terminal <bnf> found.\n" );
     
     }
 
-    ExecutionNode* NonTerminalNode = createNonTerminalExecutionNode( start->getNonTerminal(start) );
+    ExecutionNode* NonTerminalNode = (ExecutionNode*) new_NonTerminalNode( start->getNonTerminal(start)->getName( start->getNonTerminal(start) ) );
     ExecutionGraph* G = createExecutionGraph( NonTerminalNode, NULL );
     exploreOrExpr( start->getOrExpr(start), G, lst );
 
@@ -105,7 +112,7 @@ void buildGraphvizExecutionGraphRepresentation( ExecutionGraph* G, FILE* fp ) {
 
     G->visited = 1;
 
-    buildGraphvizExecutionNodeRepresentation( G->Node, fp );
+    G->Node->toGraphviz( G->Node, fp );
 
     for( int i=0; i < G->NumberOfBranches; i++ ) {
 
@@ -132,7 +139,7 @@ void freeExecutionGraph_Implementation(ExecutionGraph* G, int visited_value) {
 
     } else {
 
-        freeExecutionNode( G->Node );
+        G->Node->destruct(G->Node);
         free(G->Node);
         G->Node = NULL;
 
@@ -254,7 +261,7 @@ void exploreOrExpr( OrExpr* OrExpression, ExecutionGraph* DirectParent, BindingL
 
     } else {
 
-        ExecutionNode* OrNode = createOrExecutionNode( );
+        ExecutionNode* OrNode = (ExecutionNode*) new_OrNode( );
         ExecutionGraph* OrGraph = createExecutionGraph( OrNode, DirectParent );
 
         for( int i=0; i<OrExpression->length(OrExpression); i++ ) {
@@ -304,7 +311,7 @@ void exploreAndExpr( AndExpr* expr, ExecutionGraph* DirectParent, BindingList* l
 
     } else {
 
-        ExecutionNode* AndNode = createAndExecutionNode( );
+        ExecutionNode* AndNode = (ExecutionNode*) new_AndNode( );
         ExecutionGraph* AndGraph = createExecutionGraph( AndNode, DirectParent );
 
         for( int i=0; i < n; i++ ) {
@@ -356,7 +363,7 @@ void exploreNonTerminal( NonTerminal* nterm, ExecutionGraph* DirectParent, Bindi
 
     }
 
-    ExecutionNode* NonTerminalNode = createNonTerminalExecutionNode( nterm );
+    ExecutionNode* NonTerminalNode = (ExecutionNode*) new_NonTerminalNode( nterm->getName(nterm) );
     ExecutionGraph* NonTerminalGraph = createExecutionGraph( NonTerminalNode, DirectParent );
 
     ExecutionGraph* RecursiveNode = verfifyRecursiveness( DirectParent, nterm->getName(nterm) );
@@ -365,7 +372,7 @@ void exploreNonTerminal( NonTerminal* nterm, ExecutionGraph* DirectParent, Bindi
 
         OrExpr* expr = b->getOrExpr(b);
 
-        printf( "Starting exploration of OR exprssion, id: %d\n", expr->getID(expr)  );
+        printf( "Starting exploration of OR expression, id: %d\n", expr->getID(expr)  );
         exploreOrExpr( expr, NonTerminalGraph, lst );
         printf( "Starting exploration of OR exprssion, id: %d\n", expr->getID(expr) );
 
@@ -398,7 +405,7 @@ ExecutionGraph* verfifyRecursiveness( ExecutionGraph* G, char* nterm ) {
 
         return NULL;
 
-    } else if( G->Node->NodeType == NON_TERMINAL_NODE && strcmp(G->Node->nterm, nterm) == 0 ) {
+    } else if( G->Node->getDynamicType( ) == NON_TERMINAL_NODE && strcmp( ( (NonTerminalNode*) G->Node)->getValue( (NonTerminalNode*) G->Node ), nterm ) == 0 ) {
 
         return G;
 
@@ -421,7 +428,7 @@ ExecutionGraph* verfifyRecursiveness( ExecutionGraph* G, char* nterm ) {
 void exploreTerminal( Terminal* term, ExecutionGraph* DirectParent ) {
 
     
-    ExecutionNode* TerminalNode = createTerminalExecutionNode( term );
+    ExecutionNode* TerminalNode = (ExecutionNode*) new_TerminalNode( term->getValue(term) );
     ExecutionGraph* TerminalGraph = createExecutionGraph( TerminalNode, DirectParent );
 
     appendNewBranch( DirectParent, TerminalGraph );

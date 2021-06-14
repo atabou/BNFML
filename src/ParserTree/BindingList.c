@@ -161,8 +161,6 @@ Binding* allElementsUnique_BindingList( BindingList* this ) {
 
 void destruct_BindingList(BindingList* this) {
 
-    printf( "Freeing Binding List with id: %d\n", this->getID(this) );
-
     for( int i=0; i<this->n; i++ ) {
         
         this->branches[i]->destruct( this->branches[i] );
@@ -174,6 +172,5 @@ void destruct_BindingList(BindingList* this) {
     free( this->branches );
     this->branches = NULL;
 
-    printf( "[SUCCESS] Freeing Binding List with id: %d\n", this->getID(this) );
 
 }
