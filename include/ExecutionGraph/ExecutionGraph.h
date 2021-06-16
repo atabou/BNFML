@@ -16,6 +16,7 @@
 
     #include <stdlib.h>
     #include "ParserTree.h"
+    #include "ExecutionNode.h"
 
 
     /**
@@ -25,7 +26,17 @@
 
     typedef struct ExecutionGraph ExecutionGraph; 
     
-    ExecutionGraph* buildExecutionGraph( BindingList* lst );
+    struct ExecutionGraph {
+
+        ExecutionNode* Node;
+        int visit_counter;
+
+        void (*toGraphviz)( ExecutionGraph* G, FILE* fp );
+        void (*destruct)( ExecutionGraph* G );
+
+    };
+
+    ExecutionGraph* new_ExecutionGraph( BindingList* lst );
     void buildGraphvizExecutionGraphRepresentation( ExecutionGraph* G, FILE* fp );
 
     void freeExecutionGraph(ExecutionGraph* tree);

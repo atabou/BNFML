@@ -35,39 +35,16 @@ void exploreTerminal( Terminal* term, ExecutionGraph* DirectParent );
 
 ExecutionGraph* verfifyRecursiveness( ExecutionGraph* tree, char* nterm );
 
-typedef struct ExecutionGraphNodeList ExecutionGraphNodeList;
-ExecutionGraph* ExecutionGraphBFS( ExecutionGraph* tree, ExecutionGraph** lst, int* n );
-
 /**************************************************************************************************
  *                                                                                                *
  *                                        DEFINITIONS                                             *
  *                                                                                                *
  **************************************************************************************************/
 
-/**
- * @struct **ExecutionGraph**
- * @brief struct to define an **ExecutionGraph** used when processing a parsed **BindingList**
- * 
- */
-struct ExecutionGraph {
+void graphviz_ExecutionGraph( ExecutionGraph* G, FILE* fp );
+void destruct_ExecutionGraph( ExecutionGraph* G );
 
-    ExecutionNode* Node; /**< A pointer to the node this object represents. */
-    
-    int NumberOfBranches; /** An integer representing the number of branches for this node */
-    ExecutionGraph** Branches; /**< A pointer to a list of the next execution branches. */
-
-    ExecutionGraph* DirectParent; /**< A pointer to the parent node of this object. It is only used internally to deal with recursiveness, do not use. */
-    int visited; /**< An integer representing if a node has been visited. Used internally to deal with memory management, do not use */
-
-};
-
-/**
- * @brief Constructor to create an **ExecutionGraph**.
- * 
- * @param lst A pointer to a **BindingList** Object.
- * @return ExecutionGraph* A pointer to a newly created **ExecutionGraph** object.
- */
-ExecutionGraph* buildExecutionGraph( BindingList* lst ) {
+ExecutionGraph* new_ExecutionGraph( BindingList* lst ) {
 
     Binding* unique = lst->allElementsUnique( lst );
 
@@ -97,14 +74,42 @@ ExecutionGraph* buildExecutionGraph( BindingList* lst ) {
     
     }
 
-    ExecutionNode* NonTerminalNode = (ExecutionNode*) new_NonTerminalNode( start->getNonTerminal(start)->getName( start->getNonTerminal(start) ) );
-    ExecutionGraph* G = createExecutionGraph( NonTerminalNode, NULL );
+    
+    ExecutionGraph* G = (ExecutionGraph*) malloc( sizeof( ExecutionGraph ) );
+    G->Node = new_NonTerminalNode( start->getNonTerminal(start)->getName( start->getNonTerminal(start) ) );
+
+    G->toGraphviz = graphviz_ExecutionGraph;
+    G->destruct = destruct_ExecutionGraph;
+
     exploreOrExpr( start->getOrExpr(start), G, lst );
 
     printf( "[SUCCESS] Finished exploring the bindings.\n" );
     printf( "[SUCCESS] Successfully finished building the execution tree.\n" );
 
     return G;
+
+}
+
+void graphviz_ExecutionGraph( ExecutionGraph* G, FILE* fp ) {
+
+    G->Node->toGraphviz( G->Node, G->visit_counter, fp );
+    G->visit_counter = G->visit_counter + 1;
+
+}
+
+void destruct_ExecutionGraph( ExecutionGraph* G ) {
+
+    G->Node->toGraphviz( G->Node, fp );
+
+    for( int i=0; i < G->NumberOfBranches; i++ ) {
+
+        fprintf( fp, "%u -> %u;\n", G->Node->id, G->Branches[i]->Node->id );
+
+        if( G->Branches[i]->visited == 0 ) {
+            buildGraphvizExecutionGraphRepresentation( G->Branches[i], fp );
+        }
+
+    }
 
 }
 

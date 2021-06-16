@@ -20,18 +20,26 @@
     struct ExecutionNode {
 
         unsigned int id;
+        
+        ExecutionNode** branches;
+        int n;
+
+        ExecutionNode* parent;
+        int visited;
 
         unsigned int (*getID)( ExecutionNode* this );
+        unsigned int (*getVisited)( ExecutionNode* this );
 
         // Abstract
-        void (*toGraphviz)( ExecutionNode* this, FILE* fp );
+        void (*append)( ExecutionNode* this, ExecutionNode* child );
+        void (*toGraphviz)( ExecutionNode* this, int counter, FILE* fp );
         void (*destruct)( ExecutionNode* this );
         enum NodeType (*getDynamicType)( );
 
        
     };
 
-    ExecutionNode* new_ExecutionNode();
+    ExecutionNode* new_ExecutionNode( ExecutionNode* parent );
 
 
 #endif

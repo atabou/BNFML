@@ -7,6 +7,7 @@
 #include "ExecutionGraph/AndNode.h"
 
 unsigned int id_GetAndNode( AndNode* this );
+int visited_GetAndNode( AndNode* this );
 
 enum NodeType dynamicType_GetAndNode();
 
@@ -16,13 +17,14 @@ void toGraphviz_Dispatch_AndNode( ExecutionNode* super, FILE* fp );
 void destruct_AndNode( AndNode* this );
 void destruct_Dispatch_AndNode( ExecutionNode* super );
 
-AndNode* new_AndNode( char* value ) {
+AndNode* new_AndNode( ExecutionNode* parent ) {
 
     AndNode* a = (AndNode*) malloc( sizeof(AndNode) );
 
-    a->super = *new_ExecutionNode();
+    a->super = *new_ExecutionNode(parent);
     
     a->getID = id_GetAndNode;
+    a->getVisited = visited_GetAndNode;
 
     a->getDynamicType = dynamicType_GetAndNode;
     a->super.getDynamicType = dynamicType_GetAndNode;
@@ -41,6 +43,11 @@ unsigned int id_GetAndNode( AndNode* this ) {
 
     return this->super.getID( (ExecutionNode*) this );
 
+}
+
+
+int visited_GetAndNode( AndNode* this ) {
+    return this->super.getVisited( (ExecutionNode*) this );
 }
 
 

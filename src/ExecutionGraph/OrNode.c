@@ -7,6 +7,7 @@
 #include "ExecutionGraph/OrNode.h"
 
 unsigned int id_GetOrNode( OrNode* this );
+int visited_GetOrNode( OrNode* this );
 
 enum NodeType dynamicType_GetOrNode();
 
@@ -16,13 +17,14 @@ void toGraphviz_Dispatch_OrNode( ExecutionNode* super, FILE* fp );
 void destruct_OrNode( OrNode* this );
 void destruct_Dispatch_OrNode( ExecutionNode* super );
 
-OrNode* new_OrNode( char* value ) {
+OrNode* new_OrNode( ExecutionNode* parent ) {
 
     OrNode* o = (OrNode*) malloc( sizeof(OrNode) );
 
-    o->super = *(new_ExecutionNode());
+    o->super = *(new_ExecutionNode( parent ));
     
     o->getID = id_GetOrNode;
+    o->getVisited = visited_GetOrNode;
 
     o->getDynamicType = dynamicType_GetOrNode;
     o->super.getDynamicType = dynamicType_GetOrNode;
@@ -37,11 +39,15 @@ OrNode* new_OrNode( char* value ) {
 
 }
 
-
-
 unsigned int id_GetOrNode( OrNode* this ) {
 
     return this->super.getID( (ExecutionNode*) this );
+
+}
+
+int visited_GetOrNode( OrNode* this ) {
+
+    return this->super.getVisited( (ExecutionNode*) this );
 
 }
 

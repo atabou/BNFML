@@ -14,7 +14,8 @@
         char* value;
 
         unsigned int (*getID)( TerminalNode* this );
-
+        int (*getVisited)( TerminalNode* this );
+        
         void (*toGraphviz)( TerminalNode* this, FILE* fp );
         void (*destruct)( TerminalNode* this );
         enum NodeType (*getDynamicType)( );
@@ -22,7 +23,7 @@
 
     };
 
-    TerminalNode* new_TerminalNode( char* value );
+    TerminalNode* new_TerminalNode( char* value, ExecutionNode* parent );
 
 
 #endif

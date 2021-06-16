@@ -14,6 +14,7 @@
         ExecutionNode super;
 
         unsigned int (*getID)( OrNode* this );
+        int (*getVisited)( OrNode* this );
 
         void (*toGraphviz)( OrNode* this, FILE* fp );
         void (*destruct)( OrNode* this );
@@ -22,6 +23,6 @@
 
     };
 
-    OrNode* new_OrNode(  );
+    OrNode* new_OrNode( ExecutionNode* parent );
 
 #endif

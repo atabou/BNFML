@@ -13,6 +13,7 @@
         ExecutionNode super;
 
         unsigned int (*getID)( AndNode* this );
+        int (*getVisited)( AndNode* this );
 
         void (*toGraphviz)( AndNode* this, FILE* fp );
         void (*destruct)( AndNode* this );
@@ -21,6 +22,6 @@
 
     };
 
-    AndNode* new_AndNode(  );
+    AndNode* new_AndNode( ExecutionNode* parent );
 
 #endif
