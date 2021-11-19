@@ -2,7 +2,7 @@
 
 ## ABOUT:
 
-BNFML is a programming language based on the Backus Naur Form (BNF) used to lex and parse the BNF language itself.
+BNFML is a language based on the Backus Naur Form (BNF) used to lex and parse the BNF language itself.
 
 ## Language Specification:
 
